@@ -1,6 +1,6 @@
 # Punchy · Backoffice
 
-The web back office of Punchy (the mobile app lives in the `tesserino` repository): paper punch
+The web back office of Punchy: paper punch
 cards, stamped digitally. An Angular 22 single page application, deployable as a static site on
 Cloudflare.
 
