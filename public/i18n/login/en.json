@@ -1,0 +1,22 @@
+{
+  "subtitle": "Digital cards back office",
+  "email": "Email",
+  "password": "Password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "submit": "Sign in",
+  "customerNotAllowed": "This is a customer account: cards are viewed in the Punchy app.",
+  "reason": {
+    "unauthorized": "Your session expired. Sign in again.",
+    "account_suspended": "Your account has been suspended by the administrator.",
+    "business_suspended": "The business you work for has been suspended by the administrator."
+  },
+  "demo": {
+    "title": "Demo mode",
+    "text": "No backend connected: the data is sample data and stays in this browser.",
+    "admin": "Sign in as admin",
+    "manager": "Sign in as manager",
+    "reset": "Restore demo data",
+    "resetDone": "Demo data restored"
+  }
+}

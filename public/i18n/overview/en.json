@@ -1,0 +1,15 @@
+{
+  "title": "Overview",
+  "subtitle": "The state of the Punchy platform.",
+  "newBusiness": "New business",
+  "newManager": "New manager",
+  "businesses": "Businesses",
+  "suspended": "{{ count }} suspended",
+  "managers": "Managers",
+  "customers": "Customers",
+  "activeCards": "Active cards",
+  "stamps30": "Stamps in the last 30 days",
+  "recent": "Latest businesses",
+  "allBusinesses": "See all",
+  "noBusinesses": "No business registered yet"
+}

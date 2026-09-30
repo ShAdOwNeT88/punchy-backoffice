@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>
+  {{ (business ? 'businesses.form.editTitle' : 'businesses.form.newTitle') | transloco }}
+</h2>
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <mat-dialog-content>
+    <div class="form-grid">
+      <mat-form-field class="span-2">
+        <mat-label>{{ 'businesses.form.name' | transloco }}</mat-label>
+        <input matInput formControlName="name" cdkFocusInitial />
+        <mat-hint>{{ 'businesses.form.nameHint' | transloco }}</mat-hint>
+        <mat-error>{{ 'validation.required' | transloco }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'businesses.form.category' | transloco }}</mat-label>
+        <mat-select formControlName="category">
+          <mat-select-trigger>{{ 'category.' + form.controls.category.value | transloco }}</mat-select-trigger>
+          @for (c of categories; track c) {
+            <mat-option [value]="c">
+              <mat-icon>{{ categoryIcon(c) }}</mat-icon>
+              {{ 'category.' + c | transloco }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'businesses.form.tagline' | transloco }}</mat-label>
+        <input matInput formControlName="tagline" />
+        <mat-hint>{{ 'businesses.form.taglineHint' | transloco }}</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'businesses.form.contactName' | transloco }}</mat-label>
+        <input matInput formControlName="contactName" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'businesses.form.contactPhone' | transloco }}</mat-label>
+        <input matInput formControlName="contactPhone" type="tel" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'common.email' | transloco }}</mat-label>
+        <input matInput formControlName="email" type="email" />
+        <mat-error>{{ 'validation.email' | transloco }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'businesses.form.vatNumber' | transloco }}</mat-label>
+        <input matInput formControlName="vatNumber" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'businesses.form.address' | transloco }}</mat-label>
+        <input matInput formControlName="address" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'businesses.form.city' | transloco }}</mat-label>
+        <input matInput formControlName="city" />
+      </mat-form-field>
+    </div>
+    @if (errorKey(); as key) {
+      <p class="form-error" role="alert">{{ key | transloco }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      {{ (business ? 'common.save' : 'common.create') | transloco }}
+    </button>
+  </mat-dialog-actions>
+</form>

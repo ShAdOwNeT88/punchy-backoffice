@@ -1,0 +1,54 @@
+{
+  "title": "Attività",
+  "subtitle": "Le strutture che usano Punchy. Sospendere un'attività blocca l'accesso a tutti i suoi gestori.",
+  "new": "Nuova attività",
+  "created": "Attività creata",
+  "search": "Cerca per nome, città, email o P. IVA",
+  "empty": "Nessuna attività trovata",
+  "col": {
+    "name": "Attività",
+    "category": "Categoria",
+    "managers": "Gestori",
+    "customers": "Clienti",
+    "cards": "Tessere attive"
+  },
+  "form": {
+    "newTitle": "Nuova attività",
+    "editTitle": "Modifica attività",
+    "name": "Nome dell'attività",
+    "nameHint": "Come compare sulla tessera dei clienti.",
+    "category": "Categoria",
+    "tagline": "Sottotitolo",
+    "taglineHint": "Es. \"swimming\", \"torrefazione dal 1962\".",
+    "contactName": "Referente",
+    "contactPhone": "Telefono di contatto",
+    "vatNumber": "Partita IVA",
+    "address": "Indirizzo",
+    "city": "Città"
+  },
+  "detail": {
+    "info": "Dati dell'attività",
+    "card": "Aspetto della tessera",
+    "cardHint": "Colori, logo e stile li sceglie il gestore da \"La mia attività\".",
+    "managers": "Gestori",
+    "manager": "Gestore",
+    "addManager": "Aggiungi gestore",
+    "noManagers": "Nessun gestore: aggiungine uno perché l'attività possa usare Punchy.",
+    "lastLogin": "Ultimo accesso",
+    "suspendedBanner": "Attività sospesa: i gestori non possono accedere finché non la riattivi."
+  },
+  "suspend": {
+    "action": "Sospendi",
+    "title": "Sospendere {{ name }}?",
+    "message": "Tutti i gestori di {{ name }} verranno disconnessi e non potranno accedere finché l'attività non sarà riattivata. Clienti e tessere restano salvati.",
+    "confirm": "Sospendi attività",
+    "done": "Attività sospesa"
+  },
+  "reactivate": {
+    "action": "Riattiva",
+    "title": "Riattivare {{ name }}?",
+    "message": "I gestori di {{ name }} potranno di nuovo accedere, salvo quelli sospesi singolarmente.",
+    "confirm": "Riattiva attività",
+    "done": "Attività riattivata"
+  }
+}

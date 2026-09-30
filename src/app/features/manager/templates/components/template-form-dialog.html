@@ -1,0 +1,67 @@
+<h2 mat-dialog-title>{{ (template ? 'templates.form.editTitle' : 'templates.form.newTitle') | transloco }}</h2>
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <mat-dialog-content>
+    <div class="program">
+      <mat-button-toggle-group formControlName="program" hideSingleSelectionIndicator [attr.aria-label]="'templates.form.program' | transloco">
+        <mat-button-toggle value="entries">{{ 'program.entries' | transloco }}</mat-button-toggle>
+        <mat-button-toggle value="monthly">{{ 'program.monthly' | transloco }}</mat-button-toggle>
+        <mat-button-toggle value="loyalty">{{ 'program.loyalty' | transloco }}</mat-button-toggle>
+      </mat-button-toggle-group>
+      <p class="dialog-hint">{{ 'programHint.' + program() | transloco }}</p>
+    </div>
+
+    <mat-form-field>
+      <mat-label>{{ 'templates.form.name' | transloco }}</mat-label>
+      <input matInput formControlName="name" />
+      <mat-hint>{{ 'templates.form.nameHint.' + program() | transloco }}</mat-hint>
+      <mat-error>{{ 'validation.required' | transloco }}</mat-error>
+    </mat-form-field>
+
+    <div class="form-grid">
+      <mat-form-field>
+        <mat-label>{{ 'templates.form.slots.' + program() | transloco }}</mat-label>
+        <input matInput type="number" min="1" max="60" formControlName="totalSlots" />
+        <mat-error>{{ 'validation.max' | transloco: { max: 60 } }}</mat-error>
+      </mat-form-field>
+
+      @if (program() === 'loyalty') {
+        <mat-form-field>
+          <mat-label>{{ 'templates.form.reward' | transloco }}</mat-label>
+          <input matInput formControlName="reward" />
+          <mat-hint>{{ 'templates.form.rewardHint' | transloco }}</mat-hint>
+          <mat-error>{{ 'validation.required' | transloco }}</mat-error>
+        </mat-form-field>
+      } @else {
+        <mat-form-field>
+          <mat-label>{{ 'templates.form.price.' + program() | transloco }}</mat-label>
+          <input matInput type="number" min="0" step="0.5" formControlName="price" />
+          <span matTextSuffix>{{ 'common.euro' | transloco }}</span>
+          <mat-error>{{ 'validation.amount' | transloco }}</mat-error>
+        </mat-form-field>
+      }
+
+      <mat-form-field class="span-2">
+        <mat-label>{{ 'templates.form.validityDays' | transloco }}</mat-label>
+        <input matInput type="number" min="1" formControlName="validityDays" />
+        <mat-hint>{{ 'templates.form.validityHint' | transloco }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-slide-toggle formControlName="printHolder">
+      {{ 'templates.form.printHolder' | transloco }}
+    </mat-slide-toggle>
+
+    @if (template) {
+      <p class="dialog-hint">{{ 'templates.form.editNote' | transloco }}</p>
+    }
+    @if (errorKey(); as key) {
+      <p class="form-error" role="alert">{{ key | transloco }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      {{ (template ? 'common.save' : 'common.create') | transloco }}
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,22 @@
+{
+  "subtitle": "Backoffice delle tessere digitali",
+  "email": "Email",
+  "password": "Password",
+  "showPassword": "Mostra password",
+  "hidePassword": "Nascondi password",
+  "submit": "Accedi",
+  "customerNotAllowed": "Questo account è di un cliente: le tessere si consultano dall'app Punchy.",
+  "reason": {
+    "unauthorized": "La sessione è scaduta. Accedi di nuovo.",
+    "account_suspended": "Il tuo account è stato sospeso dall'amministratore.",
+    "business_suspended": "L'attività per cui lavori è stata sospesa dall'amministratore."
+  },
+  "demo": {
+    "title": "Modalità demo",
+    "text": "Nessun backend collegato: i dati sono di esempio e restano in questo browser.",
+    "admin": "Entra come admin",
+    "manager": "Entra come gestore",
+    "reset": "Ripristina dati demo",
+    "resetDone": "Dati demo ripristinati"
+  }
+}

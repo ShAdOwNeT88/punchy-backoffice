@@ -1,0 +1,176 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "add": "Add",
+    "back": "Back",
+    "retry": "Retry",
+    "search": "Search",
+    "all": "All",
+    "actions": "Actions",
+    "open": "Open",
+    "loading": "Loading…",
+    "loadError": "The data could not be loaded.",
+    "saved": "Changes saved",
+    "none": "—",
+    "yes": "Yes",
+    "no": "No",
+    "optional": "optional",
+    "status": "Status",
+    "email": "Email",
+    "phone": "Phone",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "initials": "Initials",
+    "initialsHint": "Printed on stamps, like the initials on the paper card.",
+    "notes": "Notes",
+    "createdAt": "Created on",
+    "euro": "€"
+  },
+  "nav": {
+    "overview": "Overview",
+    "businesses": "Businesses",
+    "managers": "Managers",
+    "dashboard": "Dashboard",
+    "cards": "Cards",
+    "customers": "Customers",
+    "templates": "Card types",
+    "business": "My business",
+    "account": "My profile",
+    "signOut": "Sign out",
+    "menu": "Menu",
+    "language": "Language",
+    "adminArea": "Administration"
+  },
+  "languages": {
+    "it": "Italiano",
+    "en": "English"
+  },
+  "validation": {
+    "required": "Required",
+    "email": "Enter a valid email",
+    "minLength": "At least {{ min }} characters",
+    "maxLength": "At most {{ max }} characters",
+    "min": "The minimum is {{ min }}",
+    "max": "The maximum is {{ max }}",
+    "integer": "Enter a whole number",
+    "amount": "Enter a valid amount",
+    "mismatch": "The passwords do not match"
+  },
+  "errors": {
+    "network": "The server cannot be reached. Check your connection and try again.",
+    "invalid_credentials": "Wrong email or password.",
+    "account_suspended": "Your account is suspended. Contact the administrator.",
+    "business_suspended": "The business you work for is suspended. Contact the administrator.",
+    "unauthorized": "Your session expired. Sign in again.",
+    "forbidden": "You are not allowed to do this.",
+    "not_found": "This item no longer exists.",
+    "validation_error": "Some data is not valid.",
+    "wrong_password": "The current password is wrong.",
+    "email_taken": "This email is already used by another account.",
+    "card_number_taken": "A card with this number already exists.",
+    "template_archived": "This card type is archived.",
+    "card_full": "The card is full.",
+    "card_not_active": "The card is not active.",
+    "period_already_paid": "This month has already been recorded.",
+    "reward_not_ready": "The reward is not available yet.",
+    "customer_has_active_cards": "The customer has active cards: cancel or complete them before deleting.",
+    "logo_invalid": "The logo must be PNG, JPEG, SVG or WebP and at most 1 MB.",
+    "unknown": "Something went wrong. Try again."
+  },
+  "accountStatus": {
+    "active": "Active",
+    "suspended": "Suspended"
+  },
+  "category": {
+    "pool": "Pool",
+    "gym": "Gym",
+    "studio": "Studio / classes",
+    "cafe": "Café",
+    "restaurant": "Restaurant",
+    "shop": "Shop",
+    "beauty": "Beauty / hairdresser",
+    "other": "Other"
+  },
+  "emblem": {
+    "none": "Category icon",
+    "leaf": "Leaf",
+    "wave": "Wave",
+    "star": "Star",
+    "heart": "Heart",
+    "bolt": "Bolt",
+    "crown": "Crown"
+  },
+  "cardStyle": {
+    "ocean": "Ocean",
+    "ember": "Ember",
+    "violet": "Violet",
+    "forest": "Forest",
+    "coffee": "Coffee",
+    "rose": "Rose"
+  },
+  "cardDesign": {
+    "gradient": "Full colour",
+    "paper": "Printed card"
+  },
+  "stampStyle": {
+    "round": "Round stamp",
+    "signature": "Pen initials"
+  },
+  "program": {
+    "entries": "Entries",
+    "monthly": "Monthly",
+    "loyalty": "Loyalty"
+  },
+  "programHint": {
+    "entries": "Prepaid package of entries: one box per entry.",
+    "monthly": "Subscription: one box per monthly fee paid.",
+    "loyalty": "Stamp collection: one box per purchase, a reward when the card is full."
+  },
+  "cardStatus": {
+    "active": "Active",
+    "completed": "Completed",
+    "expired": "Expired",
+    "cancelled": "Cancelled"
+  },
+  "paymentMethod": {
+    "cash": "Cash",
+    "card": "Card / POS",
+    "transfer": "Bank transfer",
+    "other": "Other"
+  },
+  "cardPreview": {
+    "front": "Front",
+    "back": "Back",
+    "side": "Card side",
+    "flip": "Turn the card over",
+    "holder": "Holder",
+    "reward": "Reward",
+    "info": "Info",
+    "cardNumber": "CARD NO.",
+    "validUntil": "Expires",
+    "header": {
+      "entries": "ENTRIES",
+      "monthly": "MONTHLY FEES",
+      "loyalty": "STAMP COLLECTION"
+    },
+    "sampleHolder": "Mario Rossi"
+  },
+  "progress": {
+    "entries": "{{ used }} of {{ total }} entries",
+    "monthly": "{{ used }} of {{ total }} months paid",
+    "loyalty": "{{ used }} of {{ total }} stamps"
+  },
+  "paginator": {
+    "itemsPerPage": "Per page",
+    "next": "Next page",
+    "previous": "Previous page",
+    "first": "First page",
+    "last": "Last page",
+    "range": "{{ start }} – {{ end }} of {{ length }}"
+  }
+}

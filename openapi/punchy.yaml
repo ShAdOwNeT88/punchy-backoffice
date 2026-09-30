@@ -1,0 +1,1309 @@
+openapi: 3.0.3
+info:
+  title: Punchy API
+  version: 0.1.0
+  description: |
+    Contract shared by the Punchy back office (admin and business managers) and the Punchy mobile
+    app (customers). Until the backend exists, the back office serves every operation below from an
+    in-memory mock (`src/mocks/`), so this document is the source of truth for both sides.
+
+    Every authenticated call carries `Authorization: Bearer <token>`. The token carries the user's
+    role and, for a manager, the business the manager works for: `business/*` operations are always
+    scoped to that business, never to a business id taken from the path.
+
+    Errors share one body, `ApiError`, whose `code` is stable and machine-readable.
+servers:
+  - url: https://api.example.com/v1
+tags:
+  - name: auth
+    description: Sign-in for every role.
+  - name: account
+    description: The signed-in user's own profile.
+  - name: admin
+    description: Platform administration. Role `admin` only.
+  - name: business
+    description: A manager's own business, its card templates, customers and cards. Role `manager` only.
+  - name: customer-app
+    description: Operations of the mobile app, role `customer`. Listed for completeness; the back office does not call them.
+
+security:
+  - bearer: []
+
+paths:
+  /auth/login:
+    post:
+      tags: [auth]
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Signed in.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401':
+          description: '`invalid_credentials`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+        '403':
+          description: '`account_suspended` or `business_suspended`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+
+  /account/me:
+    get:
+      tags: [account]
+      operationId: getMe
+      responses:
+        '200':
+          description: The signed-in user.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+    patch:
+      tags: [account]
+      operationId: updateMe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProfileUpdate' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+  /account/password:
+    post:
+      tags: [account]
+      operationId: changePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PasswordChange' }
+      responses:
+        '204': { description: Changed. }
+        '400':
+          description: '`wrong_password`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+
+  /admin/overview:
+    get:
+      tags: [admin]
+      operationId: getAdminOverview
+      responses:
+        '200':
+          description: Platform totals.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminOverview' }
+  /admin/businesses:
+    get:
+      tags: [admin]
+      operationId: listBusinesses
+      parameters:
+        - $ref: '#/components/parameters/Query'
+        - name: status
+          in: query
+          schema: { $ref: '#/components/schemas/AccountStatus' }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: One page of businesses, by name.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BusinessPage' }
+    post:
+      tags: [admin]
+      operationId: createBusiness
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BusinessInput' }
+      responses:
+        '201':
+          description: Created, active.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+  /admin/businesses/{businessId}:
+    parameters:
+      - $ref: '#/components/parameters/BusinessId'
+    get:
+      tags: [admin]
+      operationId: getBusiness
+      responses:
+        '200':
+          description: The business.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [admin]
+      operationId: updateBusiness
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BusinessInput' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /admin/businesses/{businessId}/status:
+    parameters:
+      - $ref: '#/components/parameters/BusinessId'
+    put:
+      tags: [admin]
+      operationId: setBusinessStatus
+      description: |
+        Suspending a business signs out and blocks every one of its managers, whatever their own
+        status; reactivating it restores each manager to their own status.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StatusChange' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /admin/managers:
+    get:
+      tags: [admin]
+      operationId: listManagers
+      parameters:
+        - $ref: '#/components/parameters/Query'
+        - name: businessId
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { $ref: '#/components/schemas/AccountStatus' }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: One page of managers, by last name.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ManagerPage' }
+    post:
+      tags: [admin]
+      operationId: createManager
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ManagerCreate' }
+      responses:
+        '201':
+          description: Created, active, with the temporary password given.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Manager' }
+        '409':
+          description: '`email_taken`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /admin/managers/{managerId}:
+    parameters:
+      - $ref: '#/components/parameters/ManagerId'
+    patch:
+      tags: [admin]
+      operationId: updateManager
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ManagerUpdate' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Manager' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: '`email_taken`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /admin/managers/{managerId}/status:
+    parameters:
+      - $ref: '#/components/parameters/ManagerId'
+    put:
+      tags: [admin]
+      operationId: setManagerStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StatusChange' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Manager' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /admin/managers/{managerId}/password:
+    parameters:
+      - $ref: '#/components/parameters/ManagerId'
+    put:
+      tags: [admin]
+      operationId: resetManagerPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PasswordReset' }
+      responses:
+        '204': { description: The manager signs in with the new temporary password. }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /business:
+    get:
+      tags: [business]
+      operationId: getMyBusiness
+      responses:
+        '200':
+          description: The manager's business.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+    patch:
+      tags: [business]
+      operationId: updateMyBusiness
+      description: A manager edits the business's public details and card appearance; name and VAT number stay with the admin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BusinessProfileUpdate' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+  /business/logo:
+    put:
+      tags: [business]
+      operationId: uploadMyBusinessLogo
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: PNG, JPEG, SVG or WebP, at most 1 MB.
+      responses:
+        '200':
+          description: Updated; `logoUrl` points at the new image.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+        '400':
+          description: '`logo_invalid`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+    delete:
+      tags: [business]
+      operationId: deleteMyBusinessLogo
+      responses:
+        '200':
+          description: Removed; cards fall back to the emblem.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Business' }
+  /business/overview:
+    get:
+      tags: [business]
+      operationId: getBusinessOverview
+      responses:
+        '200':
+          description: Totals and the cards that need attention.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BusinessOverview' }
+  /business/templates:
+    get:
+      tags: [business]
+      operationId: listTemplates
+      parameters:
+        - name: includeArchived
+          in: query
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: The business's card templates, active first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/CardTemplate' }
+    post:
+      tags: [business]
+      operationId: createTemplate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CardTemplateInput' }
+      responses:
+        '201':
+          description: Created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CardTemplate' }
+  /business/templates/{templateId}:
+    parameters:
+      - $ref: '#/components/parameters/TemplateId'
+    patch:
+      tags: [business]
+      operationId: updateTemplate
+      description: Changes apply to cards issued afterwards; issued cards keep the terms they were sold with.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CardTemplateUpdate' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CardTemplate' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /business/customers:
+    get:
+      tags: [business]
+      operationId: listCustomers
+      parameters:
+        - $ref: '#/components/parameters/Query'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: One page of customers, by last name.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CustomerPage' }
+    post:
+      tags: [business]
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CustomerInput' }
+      responses:
+        '201':
+          description: Created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Customer' }
+        '409':
+          description: '`email_taken` — another customer of this business has that email.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /business/customers/{customerId}:
+    parameters:
+      - $ref: '#/components/parameters/CustomerId'
+    get:
+      tags: [business]
+      operationId: getCustomer
+      responses:
+        '200':
+          description: The customer.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Customer' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [business]
+      operationId: updateCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CustomerInput' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Customer' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: '`email_taken`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+    delete:
+      tags: [business]
+      operationId: deleteCustomer
+      responses:
+        '204': { description: Deleted. }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: '`customer_has_active_cards` — cancel or complete them first.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /business/cards:
+    get:
+      tags: [business]
+      operationId: listCards
+      parameters:
+        - $ref: '#/components/parameters/Query'
+        - name: customerId
+          in: query
+          schema: { type: string }
+        - name: group
+          in: query
+          schema: { $ref: '#/components/schemas/ProgramGroup' }
+        - name: status
+          in: query
+          schema: { $ref: '#/components/schemas/CardStatus' }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: One page of cards, most recently used first.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CardPage' }
+    post:
+      tags: [business]
+      operationId: issueCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CardIssue' }
+      responses:
+        '201':
+          description: Issued. It appears in the customer's app.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '409':
+          description: '`card_number_taken` or `template_archived`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /business/cards/{cardId}:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+    get:
+      tags: [business]
+      operationId: getCard
+      responses:
+        '200':
+          description: The card with its stamps and payments.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [business]
+      operationId: updateCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CardUpdate' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: '`card_number_taken`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /business/cards/{cardId}/cancel:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+    post:
+      tags: [business]
+      operationId: cancelCard
+      responses:
+        '200':
+          description: Cancelled; it stays in the history but accepts nothing more.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /business/cards/{cardId}/stamps:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+    post:
+      tags: [business]
+      operationId: addStamp
+      description: |
+        Validates one box: an entry, a monthly fee or a purchase. The operator's initials come from
+        the signed-in manager. For a `monthly` card `period` is required and, when `payment` is
+        given, the payment is recorded together with the stamp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StampInput' }
+      responses:
+        '201':
+          description: Stamped; returns the updated card.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '409':
+          description: '`card_full`, `card_not_active` or `period_already_paid`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /business/cards/{cardId}/stamps/{stampId}:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+      - name: stampId
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      tags: [business]
+      operationId: deleteStamp
+      description: Undoes a stamp put by mistake, together with the payment recorded with it.
+      responses:
+        '200':
+          description: Removed; returns the updated card.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /business/cards/{cardId}/payments:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+    post:
+      tags: [business]
+      operationId: addPayment
+      description: Records a payment that stamps nothing, such as the price of an entries package or a partial payment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PaymentInput' }
+      responses:
+        '201':
+          description: Recorded; returns the updated card.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '409':
+          description: '`card_not_active`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /business/cards/{cardId}/payments/{paymentId}:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+      - name: paymentId
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      tags: [business]
+      operationId: deletePayment
+      responses:
+        '200':
+          description: Removed; returns the updated card.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Card' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /business/cards/{cardId}/redeem:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+    post:
+      tags: [business]
+      operationId: redeemReward
+      description: Hands out the reward of a full `loyalty` card. The card becomes `completed`; with `renew` a fresh card on the same template is issued to the same customer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RedeemRequest' }
+      responses:
+        '200':
+          description: Redeemed.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RedeemResponse' }
+        '409':
+          description: '`reward_not_ready`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+
+  /cards:
+    get:
+      tags: [customer-app]
+      operationId: listMyCards
+      description: The signed-in customer's cards in the shape of the mobile spec (`docs/specs/2026-09-30-tessere-digitali.md` in the app repository). Cancelled cards are not listed.
+      responses:
+        '200':
+          description: The customer's cards.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AppCard' }
+  /cards/{cardId}:
+    parameters:
+      - $ref: '#/components/parameters/CardId'
+    get:
+      tags: [customer-app]
+      operationId: getMyCard
+      responses:
+        '200':
+          description: One card.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AppCard' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+
+  parameters:
+    Query:
+      name: q
+      in: query
+      description: Free text, matched case-insensitively against names, emails, phone and card numbers.
+      schema: { type: string }
+    Page:
+      name: page
+      in: query
+      description: Zero-based.
+      schema: { type: integer, minimum: 0, default: 0 }
+    PageSize:
+      name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    BusinessId:
+      name: businessId
+      in: path
+      required: true
+      schema: { type: string }
+    ManagerId:
+      name: managerId
+      in: path
+      required: true
+      schema: { type: string }
+    TemplateId:
+      name: templateId
+      in: path
+      required: true
+      schema: { type: string }
+    CustomerId:
+      name: customerId
+      in: path
+      required: true
+      schema: { type: string }
+    CardId:
+      name: cardId
+      in: path
+      required: true
+      schema: { type: string }
+
+  responses:
+    NotFound:
+      description: '`not_found`.'
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+
+  schemas:
+    ApiError:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+          description: |
+            One of `invalid_credentials`, `account_suspended`, `business_suspended`, `unauthorized`,
+            `forbidden`, `not_found`, `validation_error`, `wrong_password`, `email_taken`,
+            `card_number_taken`, `template_archived`, `card_full`, `card_not_active`,
+            `period_already_paid`, `reward_not_ready`, `customer_has_active_cards`, `logo_invalid`.
+        message:
+          type: string
+          description: Developer-facing detail; never shown to users as is.
+
+    Role:
+      type: string
+      enum: [admin, manager, customer]
+    AccountStatus:
+      type: string
+      enum: [active, suspended]
+    StatusChange:
+      type: object
+      required: [status]
+      properties:
+        status: { $ref: '#/components/schemas/AccountStatus' }
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+    LoginResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string }
+        user: { $ref: '#/components/schemas/User' }
+    User:
+      type: object
+      required: [id, email, firstName, lastName, role]
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+        firstName: { type: string }
+        lastName: { type: string }
+        role: { $ref: '#/components/schemas/Role' }
+        initials:
+          type: string
+          description: Printed on the stamps the user puts, as on the paper card.
+        businessId:
+          type: string
+          description: Managers only.
+        businessName:
+          type: string
+          description: Managers only.
+    ProfileUpdate:
+      type: object
+      required: [firstName, lastName]
+      properties:
+        firstName: { type: string, minLength: 1 }
+        lastName: { type: string, minLength: 1 }
+        initials: { type: string, maxLength: 3 }
+    PasswordChange:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword: { type: string }
+        newPassword: { type: string, minLength: 8 }
+    PasswordReset:
+      type: object
+      required: [temporaryPassword]
+      properties:
+        temporaryPassword: { type: string, minLength: 8 }
+
+    Paged:
+      type: object
+      required: [total, page, pageSize]
+      properties:
+        total: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+
+    IssuerCategory:
+      type: string
+      enum: [pool, gym, studio, cafe, restaurant, shop, beauty, other]
+    IssuerEmblem:
+      type: string
+      enum: [leaf, wave, star, heart, bolt, crown]
+    CardStyle:
+      type: string
+      enum: [ocean, ember, violet, forest, coffee, rose]
+    CardDesign:
+      type: string
+      enum: [gradient, paper]
+    StampStyle:
+      type: string
+      enum: [round, signature]
+    CardProgram:
+      type: string
+      enum: [entries, monthly, loyalty]
+    ProgramGroup:
+      type: string
+      description: '`membership` covers `entries` and `monthly`; `loyalty` covers `loyalty`.'
+      enum: [membership, loyalty]
+    CardStatus:
+      type: string
+      description: |
+        `active` accepts stamps; `completed` is full (entries used up, reward redeemed, months all
+        paid); `expired` is past `validUntil`; `cancelled` was withdrawn by the business.
+      enum: [active, completed, expired, cancelled]
+    PaymentMethod:
+      type: string
+      enum: [cash, card, transfer, other]
+
+    Appearance:
+      type: object
+      required: [style, design, stampStyle]
+      properties:
+        style: { $ref: '#/components/schemas/CardStyle' }
+        design: { $ref: '#/components/schemas/CardDesign' }
+        stampStyle: { $ref: '#/components/schemas/StampStyle' }
+        emblem: { $ref: '#/components/schemas/IssuerEmblem' }
+
+    Business:
+      type: object
+      required: [id, name, category, status, appearance, createdAt, managerCount, customerCount, activeCardCount]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        category: { $ref: '#/components/schemas/IssuerCategory' }
+        tagline: { type: string }
+        contactName: { type: string }
+        contactPhone: { type: string }
+        email: { type: string, format: email }
+        address: { type: string }
+        city: { type: string }
+        vatNumber: { type: string }
+        logoUrl: { type: string }
+        appearance: { $ref: '#/components/schemas/Appearance' }
+        status: { $ref: '#/components/schemas/AccountStatus' }
+        createdAt: { type: string, format: date-time }
+        managerCount: { type: integer }
+        customerCount: { type: integer }
+        activeCardCount: { type: integer }
+    BusinessInput:
+      type: object
+      required: [name, category]
+      properties:
+        name: { type: string, minLength: 1 }
+        category: { $ref: '#/components/schemas/IssuerCategory' }
+        tagline: { type: string }
+        contactName: { type: string }
+        contactPhone: { type: string }
+        email: { type: string, format: email }
+        address: { type: string }
+        city: { type: string }
+        vatNumber: { type: string }
+        appearance: { $ref: '#/components/schemas/Appearance' }
+    BusinessProfileUpdate:
+      type: object
+      required: [category, appearance]
+      properties:
+        category: { $ref: '#/components/schemas/IssuerCategory' }
+        tagline: { type: string }
+        contactName: { type: string }
+        contactPhone: { type: string }
+        email: { type: string, format: email }
+        address: { type: string }
+        city: { type: string }
+        appearance: { $ref: '#/components/schemas/Appearance' }
+    BusinessPage:
+      allOf:
+        - $ref: '#/components/schemas/Paged'
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Business' }
+
+    Manager:
+      type: object
+      required: [id, email, firstName, lastName, businessId, businessName, status, businessStatus, createdAt]
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+        firstName: { type: string }
+        lastName: { type: string }
+        initials: { type: string }
+        phone: { type: string }
+        businessId: { type: string }
+        businessName: { type: string }
+        status: { $ref: '#/components/schemas/AccountStatus' }
+        businessStatus: { $ref: '#/components/schemas/AccountStatus' }
+        lastLoginAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+    ManagerCreate:
+      type: object
+      required: [email, firstName, lastName, businessId, temporaryPassword]
+      properties:
+        email: { type: string, format: email }
+        firstName: { type: string, minLength: 1 }
+        lastName: { type: string, minLength: 1 }
+        initials: { type: string, maxLength: 3 }
+        phone: { type: string }
+        businessId: { type: string }
+        temporaryPassword: { type: string, minLength: 8 }
+    ManagerUpdate:
+      type: object
+      required: [email, firstName, lastName, businessId]
+      properties:
+        email: { type: string, format: email }
+        firstName: { type: string, minLength: 1 }
+        lastName: { type: string, minLength: 1 }
+        initials: { type: string, maxLength: 3 }
+        phone: { type: string }
+        businessId: { type: string }
+    ManagerPage:
+      allOf:
+        - $ref: '#/components/schemas/Paged'
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Manager' }
+
+    AdminOverview:
+      type: object
+      required: [businesses, suspendedBusinesses, managers, customers, activeCards, stampsLast30Days, recentBusinesses]
+      properties:
+        businesses: { type: integer }
+        suspendedBusinesses: { type: integer }
+        managers: { type: integer }
+        customers: { type: integer }
+        activeCards: { type: integer }
+        stampsLast30Days: { type: integer }
+        recentBusinesses:
+          type: array
+          items: { $ref: '#/components/schemas/Business' }
+
+    CardTemplate:
+      type: object
+      description: What the business sells or hands out; every card is issued from one.
+      required: [id, name, program, totalSlots, printHolder, archived, activeCardCount]
+      properties:
+        id: { type: string }
+        name:
+          type: string
+          description: Shown to staff only, e.g. "10 ingressi nuoto libero".
+        program: { $ref: '#/components/schemas/CardProgram' }
+        totalSlots: { type: integer, minimum: 1, maximum: 60 }
+        priceCents:
+          type: integer
+          description: '`entries`: price of the package. `monthly`: the default monthly fee. Unused by `loyalty`.'
+        reward:
+          type: string
+          description: '`loyalty` only, in the customers'' language. Required for `loyalty`.'
+        validityDays:
+          type: integer
+          description: Days from issue to `validUntil`; absent means the card does not expire.
+        printHolder:
+          type: boolean
+          description: Whether the holder's name is printed on the front. Loyalty cards are often anonymous.
+        archived:
+          type: boolean
+          description: Archived templates issue no new cards; issued cards are unaffected.
+        activeCardCount: { type: integer }
+    CardTemplateInput:
+      type: object
+      required: [name, program, totalSlots, printHolder]
+      properties:
+        name: { type: string, minLength: 1 }
+        program: { $ref: '#/components/schemas/CardProgram' }
+        totalSlots: { type: integer, minimum: 1, maximum: 60 }
+        priceCents: { type: integer, minimum: 0 }
+        reward: { type: string }
+        validityDays: { type: integer, minimum: 1 }
+        printHolder: { type: boolean }
+    CardTemplateUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        totalSlots: { type: integer, minimum: 1, maximum: 60 }
+        priceCents: { type: integer, minimum: 0 }
+        reward: { type: string }
+        validityDays: { type: integer, minimum: 1 }
+        printHolder: { type: boolean }
+        archived: { type: boolean }
+
+    Customer:
+      type: object
+      required: [id, firstName, lastName, createdAt, activeCardCount]
+      properties:
+        id: { type: string }
+        firstName: { type: string }
+        lastName: { type: string }
+        email:
+          type: string
+          format: email
+          description: The address the customer signs in to the app with. Without it the cards exist only in the back office.
+        phone: { type: string }
+        birthDate: { type: string, format: date }
+        notes: { type: string }
+        createdAt: { type: string, format: date-time }
+        activeCardCount: { type: integer }
+        lastVisitAt: { type: string, format: date-time }
+    CustomerInput:
+      type: object
+      required: [firstName, lastName]
+      properties:
+        firstName: { type: string, minLength: 1 }
+        lastName: { type: string, minLength: 1 }
+        email: { type: string, format: email }
+        phone: { type: string }
+        birthDate: { type: string, format: date }
+        notes: { type: string }
+    CustomerPage:
+      allOf:
+        - $ref: '#/components/schemas/Paged'
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Customer' }
+
+    Stamp:
+      type: object
+      required: [id, date]
+      properties:
+        id: { type: string }
+        date: { type: string, format: date }
+        period:
+          type: string
+          format: date
+          description: '`monthly` only: the first day of the month paid.'
+        amountCents: { type: integer }
+        operatorInitials: { type: string }
+        operatorName: { type: string }
+        paymentId:
+          type: string
+          description: The payment recorded together with this stamp.
+        note:
+          type: string
+          description: Free text, or `carried_over` for a box copied from the paper card at issue.
+    Payment:
+      type: object
+      required: [id, date, amountCents, method]
+      properties:
+        id: { type: string }
+        date: { type: string, format: date }
+        amountCents: { type: integer, minimum: 1 }
+        method: { $ref: '#/components/schemas/PaymentMethod' }
+        period:
+          type: string
+          format: date
+          description: '`monthly` only: the month paid.'
+        operatorName: { type: string }
+        note: { type: string }
+
+    Card:
+      type: object
+      required: [id, number, templateId, templateName, program, totalSlots, printHolder, customer, status, rewardReady, issuedAt, stamps, payments, paidCents]
+      properties:
+        id: { type: string }
+        number:
+          type: string
+          description: Unique within the business. Assigned in sequence unless given, so paper cards keep their number.
+        templateId: { type: string }
+        templateName: { type: string }
+        program: { $ref: '#/components/schemas/CardProgram' }
+        totalSlots:
+          type: integer
+          description: Copied from the template at issue.
+        priceCents:
+          type: integer
+          description: Copied from the template at issue.
+        reward: { type: string }
+        printHolder: { type: boolean }
+        validUntil: { type: string, format: date }
+        customer:
+          type: object
+          required: [id, firstName, lastName]
+          properties:
+            id: { type: string }
+            firstName: { type: string }
+            lastName: { type: string }
+        status: { $ref: '#/components/schemas/CardStatus' }
+        rewardReady:
+          type: boolean
+          description: A `loyalty` card whose boxes are all stamped and whose reward is not yet redeemed.
+        issuedAt: { type: string, format: date-time }
+        lastStampAt: { type: string, format: date }
+        redeemedAt: { type: string, format: date-time }
+        stamps:
+          type: array
+          description: Oldest first.
+          items: { $ref: '#/components/schemas/Stamp' }
+        payments:
+          type: array
+          description: Oldest first.
+          items: { $ref: '#/components/schemas/Payment' }
+        paidCents:
+          type: integer
+          description: Sum of `payments`.
+    CardIssue:
+      type: object
+      required: [customerId, templateId]
+      properties:
+        customerId: { type: string }
+        templateId: { type: string }
+        number:
+          type: string
+          description: Keep the number of the paper card; absent assigns the next one.
+        validUntil:
+          type: string
+          format: date
+          description: Overrides the template's `validityDays`.
+        stampsAlreadyUsed:
+          type: integer
+          minimum: 0
+          description: Boxes already stamped on the paper card being replaced. Recorded as stamps dated today whose `note` is `carried_over`.
+        payment: { $ref: '#/components/schemas/PaymentInput' }
+    CardUpdate:
+      type: object
+      properties:
+        number: { type: string, minLength: 1 }
+        validUntil:
+          type: string
+          format: date
+          nullable: true
+    CardPage:
+      allOf:
+        - $ref: '#/components/schemas/Paged'
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Card' }
+    StampInput:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Defaults to today.
+        period:
+          type: string
+          format: date
+          description: '`monthly`: required, the first day of the month paid.'
+        note: { type: string }
+        payment: { $ref: '#/components/schemas/PaymentInput' }
+    PaymentInput:
+      type: object
+      required: [amountCents, method]
+      properties:
+        amountCents: { type: integer, minimum: 1 }
+        method: { $ref: '#/components/schemas/PaymentMethod' }
+        date:
+          type: string
+          format: date
+          description: Defaults to today.
+        note: { type: string }
+    RedeemRequest:
+      type: object
+      properties:
+        renew:
+          type: boolean
+          description: Issue a fresh card on the same template to the same customer.
+    RedeemResponse:
+      type: object
+      required: [card]
+      properties:
+        card: { $ref: '#/components/schemas/Card' }
+        renewed: { $ref: '#/components/schemas/Card' }
+
+    BusinessOverview:
+      type: object
+      required: [customers, activeCards, stampsToday, stampsLast30Days, revenueMonthCents, attention]
+      properties:
+        customers: { type: integer }
+        activeCards: { type: integer }
+        stampsToday: { type: integer }
+        stampsLast30Days: { type: integer }
+        revenueMonthCents:
+          type: integer
+          description: Payments dated in the current month.
+        attention:
+          type: array
+          description: Cards that need staff action, most urgent first.
+          items: { $ref: '#/components/schemas/AttentionItem' }
+    AttentionItem:
+      type: object
+      required: [reason, card]
+      properties:
+        reason:
+          type: string
+          enum: [reward_ready, expiring_soon, month_unpaid, balance_due, almost_used_up]
+          description: |
+            `reward_ready`: a loyalty card is full. `expiring_soon`: `validUntil` within 14 days.
+            `month_unpaid`: a monthly card has no stamp for the current month. `balance_due`: an
+            entries card paid less than its price. `almost_used_up`: an entries card with at most
+            two boxes left.
+        card: { $ref: '#/components/schemas/Card' }
+
+    AppCard:
+      type: object
+      description: The card as the mobile app reads it. Built from `Card` and its `Business`.
+      required: [id]
+      properties:
+        id: { type: string }
+        number: { type: string }
+        issuer:
+          type: object
+          properties:
+            name: { type: string }
+            category: { $ref: '#/components/schemas/IssuerCategory' }
+            emblem: { $ref: '#/components/schemas/IssuerEmblem' }
+            logoUrl: { type: string }
+            tagline: { type: string }
+            contactName: { type: string }
+            contactPhone: { type: string }
+        holder:
+          type: object
+          description: Present only when the template prints the holder.
+          properties:
+            firstName: { type: string }
+            lastName: { type: string }
+        style: { $ref: '#/components/schemas/CardStyle' }
+        design: { $ref: '#/components/schemas/CardDesign' }
+        stampStyle: { $ref: '#/components/schemas/StampStyle' }
+        program: { $ref: '#/components/schemas/CardProgram' }
+        totalSlots: { type: integer }
+        reward: { type: string }
+        validUntil: { type: string, format: date }
+        stamps:
+          type: array
+          items:
+            type: object
+            required: [date]
+            properties:
+              date: { type: string, format: date }
+              period: { type: string, format: date }
+              amountCents: { type: integer }
+              operatorInitials: { type: string }

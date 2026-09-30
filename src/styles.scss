@@ -1,1 +1,252 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@use './styles/theme-colors' as brand;
+@use './styles/tokens';
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: brand.$primary-palette,
+        tertiary: brand.$tertiary-palette,
+      ),
+      typography: (
+        plain-family: 'Inter, Roboto, sans-serif',
+        brand-family: 'Inter, Roboto, sans-serif',
+      ),
+      density: 0,
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      subhead-weight: 600,
+      supporting-text-color: var(--mat-sys-on-surface),
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--app-background);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}
+
+// Page building blocks shared by every feature.
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--app-space-4);
+  margin-bottom: var(--app-space-6);
+
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-headline-small);
+    font-weight: 600;
+  }
+
+  p {
+    margin: var(--app-space-1) 0 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.page-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-2);
+}
+
+.panel {
+  background: var(--app-surface);
+  border: var(--app-border) solid var(--mat-sys-outline-variant);
+  border-radius: var(--app-radius-lg);
+  padding: var(--app-space-5);
+  box-sizing: border-box;
+
+  h2 {
+    margin: 0 0 var(--app-space-4);
+    font: var(--mat-sys-title-medium);
+    font-weight: 600;
+  }
+}
+
+.panel--flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--app-space-3);
+  padding: var(--app-space-4) var(--app-space-4) 0;
+
+  .grow {
+    flex: 1 1 var(--app-tile-min);
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--app-space-4);
+  // Fields keep their own height: a long hint in one column must not stretch the neighbour.
+  align-items: start;
+
+  .span-2 {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table.mat-mdc-table {
+  width: 100%;
+}
+
+tr.clickable-row {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--app-surface-muted);
+  }
+}
+
+.cell-main {
+  font-weight: 500;
+}
+
+.cell-sub {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.app-snack-error {
+  --mat-snack-bar-container-color: var(--app-error);
+  --mat-snack-bar-supporting-text-color: var(--app-on-dark);
+  --mat-snack-bar-button-color: var(--app-on-dark);
+}
+
+// Dialog content is one vertical rhythm: fields, grids, toggles and texts are spaced by the same
+// gap, so no dialog needs margins of its own.
+.mat-mdc-dialog-container .mat-mdc-dialog-content.mat-mdc-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-4);
+  // Room for the floating label of the first outlined field, and for the touch target of a
+  // toggle in last position, which would otherwise add a needless scrollbar.
+  padding-top: var(--app-space-2);
+  padding-bottom: var(--app-space-2);
+  overflow-x: hidden;
+
+  > p {
+    margin: 0;
+  }
+
+  > .mat-mdc-form-field {
+    width: 100%;
+  }
+}
+
+.dialog-lead {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.dialog-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-3);
+  padding-top: var(--app-space-4);
+  border-top: var(--app-border) solid var(--mat-sys-outline-variant);
+}
+
+.dialog-section__title {
+  font: var(--mat-sys-title-small);
+  font-weight: 600;
+}
+
+.dialog-hint {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Dialog sizes: open dialogs with `panelClass: 'app-dialog'` (plus `app-dialog--narrow`).
+.app-dialog {
+  width: min(var(--app-dialog-width), 94vw);
+  max-width: 94vw !important;
+}
+
+.app-dialog--narrow {
+  width: min(var(--app-login-width), 94vw);
+}
+
+.with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--app-space-2);
+
+  .mat-icon {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.form-error {
+  margin: var(--app-space-2) 0 0;
+  padding: var(--app-space-3);
+  border-radius: var(--app-radius-sm);
+  background: var(--app-error-soft);
+  color: var(--app-error);
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--app-space-2) var(--app-space-4);
+  margin: 0;
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--app-space-1);
+  margin-bottom: var(--app-space-2);
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+  font: var(--mat-sys-label-large);
+
+  &:hover {
+    color: var(--mat-sys-primary);
+  }
+}
+
+.warn-icon {
+  vertical-align: middle;
+  margin-left: var(--app-space-1);
+  color: var(--app-error);
+  transform: scale(0.8);
+}

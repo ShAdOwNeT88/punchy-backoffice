@@ -1,0 +1,145 @@
+{
+  "title": "Clienti",
+  "subtitle": "L'anagrafica dei tuoi clienti e le loro tessere.",
+  "new": "Nuovo cliente",
+  "created": "Cliente creato",
+  "search": "Cerca per nome, email, telefono o numero di tessera",
+  "empty": "Nessun cliente trovato",
+  "emptyHint": "Aggiungi un cliente per emettergli la prima tessera.",
+  "noEmail": "Senza email: niente app",
+  "since": "Cliente dal {{ date }}",
+  "contact": "Contatti",
+  "cards": "Tessere",
+  "noCards": "Nessuna tessera",
+  "appHint": "Vede le sue tessere nell'app Punchy accedendo con {{ email }}.",
+  "noAppHint": "Senza email il cliente non può vedere le tessere nell'app: aggiungila quando vuoi.",
+  "col": {
+    "name": "Cliente",
+    "activeCards": "Tessere attive",
+    "lastVisit": "Ultima visita"
+  },
+  "form": {
+    "newTitle": "Nuovo cliente",
+    "editTitle": "Modifica cliente",
+    "emailHint": "Serve al cliente per vedere le tessere nell'app.",
+    "birthDate": "Data di nascita"
+  },
+  "delete": {
+    "title": "Eliminare {{ name }}?",
+    "message": "Verranno eliminati il cliente e lo storico delle sue tessere. Non si può annullare.",
+    "done": "Cliente eliminato"
+  },
+  "cardsTitle": "Tessere",
+  "cardsSubtitle": "Tutte le tessere emesse. Apri una tessera per vidimarla o registrare un pagamento.",
+  "cardsSearch": "Numero di tessera o cliente",
+  "noCardsFound": "Nessuna tessera trovata",
+  "group": {
+    "label": "Tipo di tessera",
+    "all": "Tutte",
+    "membership": "Abbonamenti",
+    "loyalty": "Fedeltà"
+  },
+  "issue": {
+    "action": "Emetti tessera",
+    "title": "Nuova tessera per {{ name }}",
+    "template": "Tipo di tessera",
+    "number": "Numero tessera",
+    "numberHint": "Vuoto: automatico, o quello di carta.",
+    "validUntil": "Scadenza",
+    "validityDefault": "Vuoto: {{ days }} giorni da oggi.",
+    "noExpiry": "Nessuna scadenza",
+    "carried": "Caselle già timbrate sulla tessera di carta",
+    "carriedHint": "Per chi passa dalla tessera di carta senza perdere i timbri.",
+    "payment": "Pagamento",
+    "paidNow": "Pagato adesso ({{ price }})",
+    "partialHint": "Anche un acconto.",
+    "monthlyHint": "Le mensilità si registrano vidimando la tessera, mese per mese.",
+    "confirm": "Emetti",
+    "done": "Tessera n. {{ number }} emessa: il cliente la trova nell'app.",
+    "noTemplates": "Crea prima un tipo di tessera."
+  },
+  "card": {
+    "until": "scade il {{ date }}",
+    "rewardReady": "Premio pronto!",
+    "due": "Da saldare {{ amount }}",
+    "issued": "emessa il {{ date }}",
+    "edit": "Modifica numero o scadenza",
+    "editTitle": "Modifica tessera",
+    "validUntilHint": "Vuoto: nessuna scadenza.",
+    "summary": "Riepilogo",
+    "toReward": "Timbri al premio",
+    "redeemedOn": "Consegnato il {{ date }}",
+    "remaining": {
+      "entries": "Ingressi rimanenti",
+      "monthly": "Mensilità rimanenti"
+    },
+    "price": "Prezzo",
+    "paid": "Pagato",
+    "holderPrinted": "Nome sulla tessera"
+  },
+  "stamp": {
+    "action": {
+      "entries": "Registra ingresso",
+      "monthly": "Registra mensilità",
+      "loyalty": "Aggiungi timbro"
+    },
+    "title": {
+      "entries": "Registra ingresso",
+      "monthly": "Registra mensilità",
+      "loyalty": "Aggiungi timbro"
+    },
+    "lead": "{{ name }}, tessera n. {{ number }}: {{ left }} caselle libere.",
+    "period": "Mese",
+    "alreadyPaid": "già pagato",
+    "date": "Data",
+    "withPayment": "Registra anche il pagamento",
+    "confirm": "Vidima",
+    "done": "Tessera vidimata",
+    "doneReward": "Tessera piena: premio da consegnare!"
+  },
+  "payment": {
+    "action": "Registra pagamento",
+    "title": "Registra pagamento",
+    "amount": "Importo",
+    "method": "Metodo",
+    "confirm": "Registra",
+    "done": "Pagamento registrato"
+  },
+  "redeem": {
+    "only": "Consegna premio",
+    "andRenew": "Consegna e nuova tessera",
+    "title": "Consegnare il premio?",
+    "message": "Confermi di aver consegnato \"{{ reward }}\"? La tessera verrà chiusa.",
+    "messageRenew": "Confermi di aver consegnato \"{{ reward }}\"? La tessera verrà chiusa e ne verrà emessa una nuova, vuota.",
+    "confirm": "Consegnato",
+    "done": "Premio consegnato"
+  },
+  "cancel": {
+    "action": "Annulla tessera",
+    "title": "Annullare la tessera n. {{ number }}?",
+    "message": "La tessera resta nello storico ma non potrà più essere vidimata.",
+    "confirm": "Annulla tessera",
+    "done": "Tessera annullata"
+  },
+  "undo": {
+    "action": "Annulla vidimazione",
+    "title": "Annullare la vidimazione?",
+    "message": "Il timbro del {{ date }} verrà tolto dalla tessera.",
+    "messagePayment": "Il timbro del {{ date }} verrà tolto dalla tessera insieme al pagamento registrato con lui.",
+    "confirm": "Annulla vidimazione",
+    "done": "Vidimazione annullata"
+  },
+  "deletePayment": {
+    "title": "Eliminare il pagamento?",
+    "message": "Il pagamento di {{ amount }} del {{ date }} verrà eliminato.",
+    "done": "Pagamento eliminato"
+  },
+  "history": {
+    "stamps": "Vidimazioni",
+    "payments": "Pagamenti",
+    "noStamps": "Ancora nessuna vidimazione",
+    "noPayments": "Nessun pagamento registrato",
+    "operator": "Operatore",
+    "carriedOver": "Dalla tessera di carta"
+  }
+}

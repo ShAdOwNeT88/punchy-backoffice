@@ -1,0 +1,46 @@
+{
+  "title": "Card types",
+  "subtitle": "Entry packages, monthly subscriptions and loyalty schemes you offer your customers.",
+  "new": "New card type",
+  "created": "Card type created",
+  "archived": "Archived: it can no longer be issued; cards already issued stay valid.",
+  "restored": "Restored",
+  "showArchived": "Show archived",
+  "archivedChip": "Archived",
+  "archive": "Archive",
+  "restore": "Restore",
+  "empty": "No card types",
+  "emptyHint": "Create the first one: e.g. \"10 entries\", \"Monthly subscription\" or \"Coffee loyalty\".",
+  "slots": "Boxes",
+  "validity": "Validity",
+  "days": "{{ days }} days from issue",
+  "noExpiry": "No expiry",
+  "holder": "Name on the card",
+  "activeCards": "Active cards",
+  "form": {
+    "newTitle": "New card type",
+    "editTitle": "Edit card type",
+    "program": "Type",
+    "name": "Name",
+    "nameHint": {
+      "entries": "Staff only, e.g. \"10 free swim entries\".",
+      "monthly": "Staff only, e.g. \"Weights room subscription\".",
+      "loyalty": "Staff only, e.g. \"Coffee loyalty\"."
+    },
+    "slots": {
+      "entries": "Number of entries",
+      "monthly": "Number of months",
+      "loyalty": "Stamps for the reward"
+    },
+    "price": {
+      "entries": "Package price",
+      "monthly": "Monthly fee"
+    },
+    "reward": "Reward",
+    "rewardHint": "As the customer will read it, e.g. \"A free coffee\".",
+    "validityDays": "Validity in days",
+    "validityHint": "Empty: the card does not expire.",
+    "printHolder": "Print the holder's name on the card",
+    "editNote": "Changes apply to new cards: cards already issued keep the terms they were sold with."
+  }
+}

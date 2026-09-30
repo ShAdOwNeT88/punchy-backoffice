@@ -1,0 +1,22 @@
+{
+  "greeting": "Hi {{ name }}",
+  "subtitle": "Here is what is happening at your business today.",
+  "newCustomer": "New customer",
+  "lookup": "Find a card",
+  "lookupHint": "Card number, or the customer's name, email or phone.",
+  "lookupAction": "Search",
+  "stampsToday": "Stamps today",
+  "activeCards": "Active cards",
+  "customers": "Customers",
+  "revenueMonth": "Collected this month",
+  "attention": "Needs attention",
+  "attentionHint": "Rewards to hand out, fees to collect, expiries and balances.",
+  "allGood": "All good: no card needs attention.",
+  "reason": {
+    "reward_ready": "Reward to hand out",
+    "month_unpaid": "Current month unpaid",
+    "expiring_soon": "Expires {{ date }}",
+    "balance_due": "{{ amount }} to pay",
+    "almost_used_up": "{{ left }} entries left"
+  }
+}

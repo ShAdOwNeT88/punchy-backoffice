@@ -1,0 +1,46 @@
+{
+  "title": "Tipi di tessera",
+  "subtitle": "Pacchetti di ingressi, abbonamenti mensili e raccolte punti che proponi ai clienti.",
+  "new": "Nuovo tipo di tessera",
+  "created": "Tipo di tessera creato",
+  "archived": "Archiviato: non potrai più emetterlo, le tessere già emesse restano valide.",
+  "restored": "Ripristinato",
+  "showArchived": "Mostra archiviati",
+  "archivedChip": "Archiviato",
+  "archive": "Archivia",
+  "restore": "Ripristina",
+  "empty": "Nessun tipo di tessera",
+  "emptyHint": "Crea il primo: ad esempio \"10 ingressi\", \"Abbonamento mensile\" o \"Fidelity caffè\".",
+  "slots": "Caselle",
+  "validity": "Validità",
+  "days": "{{ days }} giorni dall'emissione",
+  "noExpiry": "Nessuna scadenza",
+  "holder": "Nome sulla tessera",
+  "activeCards": "Tessere attive",
+  "form": {
+    "newTitle": "Nuovo tipo di tessera",
+    "editTitle": "Modifica tipo di tessera",
+    "program": "Tipo",
+    "name": "Nome",
+    "nameHint": {
+      "entries": "Visibile solo allo staff, es. \"10 ingressi nuoto libero\".",
+      "monthly": "Visibile solo allo staff, es. \"Abbonamento sala pesi\".",
+      "loyalty": "Visibile solo allo staff, es. \"Fidelity caffè\"."
+    },
+    "slots": {
+      "entries": "Numero di ingressi",
+      "monthly": "Numero di mensilità",
+      "loyalty": "Timbri per il premio"
+    },
+    "price": {
+      "entries": "Prezzo del pacchetto",
+      "monthly": "Quota mensile"
+    },
+    "reward": "Premio",
+    "rewardHint": "Come lo leggerà il cliente, es. \"Un caffè omaggio\".",
+    "validityDays": "Validità in giorni",
+    "validityHint": "Vuoto: la tessera non scade.",
+    "printHolder": "Stampa il nome del titolare sulla tessera",
+    "editNote": "Le modifiche valgono per le nuove tessere: quelle già emesse mantengono le condizioni con cui sono state vendute."
+  }
+}

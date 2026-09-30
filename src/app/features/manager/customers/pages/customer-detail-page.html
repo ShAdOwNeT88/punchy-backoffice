@@ -1,0 +1,75 @@
+<a class="back-link" routerLink="/manager/customers">
+  <mat-icon>arrow_back</mat-icon>{{ 'nav.customers' | transloco }}
+</a>
+
+@if (customer.isLoading() && !customer.value()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (customer.error()) {
+  <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+    <button mat-stroked-button (click)="customer.reload()">{{ 'common.retry' | transloco }}</button>
+  </app-empty-state>
+} @else if (customer.value(); as c) {
+  <header class="page-header">
+    <div>
+      <h1>{{ c.firstName }} {{ c.lastName }}</h1>
+      <p>{{ 'customers.since' | transloco: { date: (c.createdAt | day) } }}</p>
+    </div>
+    <div class="page-header__actions">
+      <button mat-button (click)="remove(c)">
+        <mat-icon>delete</mat-icon>{{ 'common.delete' | transloco }}
+      </button>
+      <button mat-stroked-button (click)="edit(c)">
+        <mat-icon>edit</mat-icon>{{ 'common.edit' | transloco }}
+      </button>
+      <button mat-flat-button (click)="issue(c)" [disabled]="!templates.value()">
+        <mat-icon>add_card</mat-icon>{{ 'customers.issue.action' | transloco }}
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="panel">
+      <h2>{{ 'customers.contact' | transloco }}</h2>
+      <dl class="dl">
+        <dt>{{ 'common.email' | transloco }}</dt>
+        <dd>{{ c.email || ('common.none' | transloco) }}</dd>
+        <dt>{{ 'common.phone' | transloco }}</dt>
+        <dd>{{ c.phone || ('common.none' | transloco) }}</dd>
+        <dt>{{ 'customers.form.birthDate' | transloco }}</dt>
+        <dd>{{ (c.birthDate | day) || ('common.none' | transloco) }}</dd>
+        <dt>{{ 'common.notes' | transloco }}</dt>
+        <dd>{{ c.notes || ('common.none' | transloco) }}</dd>
+      </dl>
+      @if (!c.email) {
+        <p class="app-hint">
+          <mat-icon aria-hidden="true">phone_iphone</mat-icon>
+          {{ 'customers.noAppHint' | transloco }}
+        </p>
+      } @else {
+        <p class="app-hint app-hint--ok">
+          <mat-icon aria-hidden="true">phone_iphone</mat-icon>
+          {{ 'customers.appHint' | transloco: { email: c.email } }}
+        </p>
+      }
+    </section>
+
+    <section class="panel panel--flush">
+      <div class="panel-title">
+        <h2>{{ 'customers.cards' | transloco }}</h2>
+      </div>
+      @if (cards.value(); as list) {
+        @for (card of list.items; track card.id) {
+          <app-card-row [card]="card" [showCustomer]="false" />
+        } @empty {
+          <app-empty-state icon="style" [title]="'customers.noCards' | transloco">
+            <button mat-stroked-button (click)="issue(c)">{{ 'customers.issue.action' | transloco }}</button>
+          </app-empty-state>
+        }
+      } @else if (cards.isLoading()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+    </section>
+  </div>
+}

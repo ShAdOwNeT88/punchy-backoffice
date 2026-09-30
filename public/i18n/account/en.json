@@ -1,0 +1,14 @@
+{
+  "title": "My profile",
+  "profile": "Personal details",
+  "password": "Password",
+  "currentPassword": "Current password",
+  "newPassword": "New password",
+  "confirmPassword": "Repeat the new password",
+  "changePassword": "Change password",
+  "passwordChanged": "Password updated",
+  "role": {
+    "admin": "Administrator",
+    "manager": "Manager"
+  }
+}

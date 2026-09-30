@@ -1,0 +1,76 @@
+<h2 mat-dialog-title>{{ (isNew ? 'managers.form.newTitle' : 'managers.form.editTitle') | transloco }}</h2>
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <mat-dialog-content>
+    <div class="form-grid">
+      <mat-form-field>
+        <mat-label>{{ 'common.firstName' | transloco }}</mat-label>
+        <input matInput formControlName="firstName" />
+        <mat-error>{{ 'validation.required' | transloco }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'common.lastName' | transloco }}</mat-label>
+        <input matInput formControlName="lastName" />
+        <mat-error>{{ 'validation.required' | transloco }}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="span-2">
+        <mat-label>{{ 'common.email' | transloco }}</mat-label>
+        <input matInput type="email" formControlName="email" />
+        <mat-hint>{{ 'managers.form.emailHint' | transloco }}</mat-hint>
+        @if (form.controls.email.hasError('required')) {
+          <mat-error>{{ 'validation.required' | transloco }}</mat-error>
+        } @else {
+          <mat-error>{{ 'validation.email' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="span-2">
+        <mat-label>{{ 'managers.form.business' | transloco }}</mat-label>
+        <mat-select formControlName="businessId">
+          @for (b of data.businesses; track b.id) {
+            <mat-option [value]="b.id">
+              {{ b.name }}
+              @if (b.status === 'suspended') {
+                ({{ 'accountStatus.suspended' | transloco }})
+              }
+            </mat-option>
+          }
+        </mat-select>
+        <mat-error>{{ 'validation.required' | transloco }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'common.initials' | transloco }}</mat-label>
+        <input matInput formControlName="initials" maxlength="3" />
+        <mat-hint>{{ 'common.initialsHint' | transloco }}</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'common.phone' | transloco }}</mat-label>
+        <input matInput type="tel" formControlName="phone" />
+      </mat-form-field>
+      @if (isNew) {
+        <mat-form-field class="span-2">
+          <mat-label>{{ 'managers.form.temporaryPassword' | transloco }}</mat-label>
+          <input matInput formControlName="temporaryPassword" autocomplete="off" />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="regenerate()"
+            [attr.aria-label]="'managers.form.regenerate' | transloco"
+          >
+            <mat-icon>autorenew</mat-icon>
+          </button>
+          <mat-hint>{{ 'managers.form.temporaryPasswordHint' | transloco }}</mat-hint>
+          <mat-error>{{ 'validation.minLength' | transloco: { min: 8 } }}</mat-error>
+        </mat-form-field>
+      }
+    </div>
+    @if (errorKey(); as key) {
+      <p class="form-error" role="alert">{{ key | transloco }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      {{ (isNew ? 'common.create' : 'common.save') | transloco }}
+    </button>
+  </mat-dialog-actions>
+</form>

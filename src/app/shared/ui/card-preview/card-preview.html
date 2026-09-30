@@ -1,0 +1,125 @@
+@let c = card();
+<div class="preview">
+  <button
+    type="button"
+    class="scene"
+    [class.scene--back]="side() === 'back'"
+    (click)="flip()"
+    [attr.aria-label]="'cardPreview.flip' | transloco"
+  >
+    <div class="face face--front card-style--{{ c.style }}" [class.face--paper]="c.design === 'paper'">
+      @if (c.design === 'paper') {
+        <div class="paper-band">
+          <span class="logo logo--light">
+            @if (c.logoUrl) {
+              <img [src]="c.logoUrl" alt="" />
+            } @else {
+              <mat-icon>{{ icon() }}</mat-icon>
+            }
+          </span>
+          <div>
+            <div class="issuer">{{ c.issuerName }}</div>
+            @if (c.tagline) {
+              <div class="tagline">{{ c.tagline }}</div>
+            }
+          </div>
+        </div>
+        <div class="paper-body">
+          <div class="paper-number">
+            <span>{{ 'cardPreview.cardNumber' | transloco }}</span>
+            <strong>{{ c.number || '—' }}</strong>
+          </div>
+          @if (c.contactName || c.contactPhone) {
+            <div class="paper-info">
+              <span class="paper-info__label">{{ 'cardPreview.info' | transloco }}</span>
+              {{ contact() }}
+            </div>
+          }
+          <div class="paper-lines">
+            @if (c.holder) {
+              <span class="pen">{{ c.holder }}</span>
+            } @else if (c.reward) {
+              <span class="pen">{{ c.reward }}</span>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="front-top">
+          <span class="logo">
+            @if (c.logoUrl) {
+              <img [src]="c.logoUrl" alt="" />
+            } @else {
+              <mat-icon>{{ icon() }}</mat-icon>
+            }
+          </span>
+          @if (c.number) {
+            <span class="number">N. {{ c.number }}</span>
+          }
+        </div>
+        <div class="issuer issuer--big">{{ c.issuerName }}</div>
+        @if (c.tagline) {
+          <div class="tagline">{{ c.tagline }}</div>
+        }
+        <div class="front-bottom">
+          <div>
+            @if (c.holder) {
+              <div class="label">{{ 'cardPreview.holder' | transloco }}</div>
+              <div class="value">{{ c.holder }}</div>
+            } @else if (c.reward) {
+              <div class="label">{{ 'cardPreview.reward' | transloco }}</div>
+              <div class="value">{{ c.reward }}</div>
+            }
+          </div>
+          @if (contact()) {
+            <div class="contact">
+              <div class="label">{{ 'cardPreview.info' | transloco }}</div>
+              <div class="value">{{ contact() }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="face face--back card-style--{{ c.style }}">
+      <div class="back-header">
+        <span>{{ 'cardPreview.header.' + c.program | transloco }}</span>
+        @if (c.validUntil) {
+          <span class="back-valid">{{ 'cardPreview.validUntil' | transloco }} {{ c.validUntil | day: 'short' }}</span>
+        }
+      </div>
+      <div class="grid" [style.grid-template-columns]="'repeat(' + columns() + ', 1fr)'">
+        @for (box of boxes(); track box.index) {
+          <div class="box" [class.box--filled]="!!box.stamp">
+            @if (box.stamp) {
+              @if (c.stampStyle === 'signature') {
+                <span class="signature">{{ box.stamp.operatorInitials || '✓' }}</span>
+              } @else {
+                <span class="stamp">
+                  <span class="stamp__initials">{{ box.stamp.operatorInitials || '✓' }}</span>
+                  <span class="stamp__date">{{ box.stamp.date | day: 'short' }}</span>
+                </span>
+              }
+            } @else if (box.isReward) {
+              <mat-icon class="reward-icon">redeem</mat-icon>
+            } @else {
+              <span class="box__index">{{ box.index + 1 }}</span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </button>
+
+  @if (showToggle()) {
+    <mat-button-toggle-group
+      class="toggle"
+      hideSingleSelectionIndicator
+      [value]="side()"
+      (change)="side.set($event.value)"
+      [attr.aria-label]="'cardPreview.side' | transloco"
+    >
+      <mat-button-toggle value="front">{{ 'cardPreview.front' | transloco }}</mat-button-toggle>
+      <mat-button-toggle value="back">{{ 'cardPreview.back' | transloco }}</mat-button-toggle>
+    </mat-button-toggle-group>
+  }
+</div>

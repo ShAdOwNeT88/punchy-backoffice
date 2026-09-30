@@ -1,0 +1,15 @@
+{
+  "title": "Panoramica",
+  "subtitle": "Lo stato della piattaforma Punchy.",
+  "newBusiness": "Nuova attività",
+  "newManager": "Nuovo gestore",
+  "businesses": "Attività",
+  "suspended": "{{ count }} sospese",
+  "managers": "Gestori",
+  "customers": "Clienti",
+  "activeCards": "Tessere attive",
+  "stamps30": "Vidimazioni negli ultimi 30 giorni",
+  "recent": "Ultime attività registrate",
+  "allBusinesses": "Vedi tutte",
+  "noBusinesses": "Nessuna attività registrata"
+}

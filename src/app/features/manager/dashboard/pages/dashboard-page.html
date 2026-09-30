@@ -1,0 +1,82 @@
+<header class="page-header">
+  <div>
+    <h1>{{ 'dashboard.greeting' | transloco: { name: user()?.firstName } }}</h1>
+    <p>{{ 'dashboard.subtitle' | transloco }}</p>
+  </div>
+  <div class="page-header__actions">
+    <a mat-stroked-button routerLink="/manager/customers" [queryParams]="{ new: 1 }">
+      <mat-icon>person_add</mat-icon>{{ 'dashboard.newCustomer' | transloco }}
+    </a>
+  </div>
+</header>
+
+<form class="lookup panel" (ngSubmit)="find()">
+  <mat-icon class="lookup__icon" aria-hidden="true">qr_code_scanner</mat-icon>
+  <mat-form-field class="lookup__field">
+    <mat-label>{{ 'dashboard.lookup' | transloco }}</mat-label>
+    <input matInput [formControl]="lookup" type="search" />
+    <mat-hint>{{ 'dashboard.lookupHint' | transloco }}</mat-hint>
+  </mat-form-field>
+  <button mat-flat-button type="submit">{{ 'dashboard.lookupAction' | transloco }}</button>
+</form>
+
+@if (overview.isLoading() && !overview.value()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (overview.error()) {
+  <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+    <button mat-stroked-button (click)="overview.reload()">{{ 'common.retry' | transloco }}</button>
+  </app-empty-state>
+} @else if (overview.value(); as o) {
+  <section class="tiles">
+    <app-stat-tile icon="approval" [value]="o.stampsToday" [label]="'dashboard.stampsToday' | transloco" />
+    <app-stat-tile icon="style" [value]="o.activeCards" [label]="'dashboard.activeCards' | transloco" />
+    <app-stat-tile icon="group" [value]="o.customers" [label]="'dashboard.customers' | transloco" />
+    <app-stat-tile
+      icon="payments"
+      [value]="o.revenueMonthCents | money"
+      [label]="'dashboard.revenueMonth' | transloco"
+    />
+  </section>
+
+  <section class="panel panel--flush">
+    <div class="panel-title">
+      <h2>{{ 'dashboard.attention' | transloco }}</h2>
+      <span class="muted">{{ 'dashboard.attentionHint' | transloco }}</span>
+    </div>
+    <ul class="attention">
+      @for (item of o.attention; track item.card.id) {
+        <li>
+          <a class="attention__row" [routerLink]="['/manager/cards', item.card.id]">
+            <div class="attention__who">
+              <span class="cell-main">{{ item.card.customer.firstName }} {{ item.card.customer.lastName }}</span>
+              <span class="cell-sub">N. {{ item.card.number }} · {{ item.card.templateName }}</span>
+            </div>
+            <app-progress-meter
+              class="attention__meter"
+              [value]="item.card.stamps.length"
+              [max]="item.card.totalSlots"
+              [done]="item.card.rewardReady"
+              [label]="'progress.' + item.card.program | transloco: { used: item.card.stamps.length, total: item.card.totalSlots }"
+            />
+            <app-status-chip [tone]="attentionTone(item.reason)">
+              {{
+                'dashboard.reason.' + item.reason
+                  | transloco
+                    : {
+                        date: (item.card.validUntil | day),
+                        amount: (balanceDue(item.card) | money),
+                        left: item.card.totalSlots - item.card.stamps.length,
+                      }
+              }}
+            </app-status-chip>
+            <mat-icon class="attention__go" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+        </li>
+      } @empty {
+        <app-empty-state icon="task_alt" [title]="'dashboard.allGood' | transloco" />
+      }
+    </ul>
+  </section>
+}

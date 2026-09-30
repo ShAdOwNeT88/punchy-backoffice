@@ -1,0 +1,70 @@
+<header class="page-header">
+  <div>
+    <h1>{{ 'overview.title' | transloco }}</h1>
+    <p>{{ 'overview.subtitle' | transloco }}</p>
+  </div>
+  <div class="page-header__actions">
+    <a mat-stroked-button routerLink="/admin/managers" [queryParams]="{ new: 1 }">
+      <mat-icon>person_add</mat-icon>
+      {{ 'overview.newManager' | transloco }}
+    </a>
+    <a mat-flat-button routerLink="/admin/businesses" [queryParams]="{ new: 1 }">
+      <mat-icon>add_business</mat-icon>
+      {{ 'overview.newBusiness' | transloco }}
+    </a>
+  </div>
+</header>
+
+@if (overview.isLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (overview.error()) {
+  <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+    <button mat-stroked-button (click)="overview.reload()">{{ 'common.retry' | transloco }}</button>
+  </app-empty-state>
+} @else if (overview.value(); as o) {
+  <section class="tiles">
+    <app-stat-tile
+      icon="storefront"
+      [value]="o.businesses"
+      [label]="'overview.businesses' | transloco"
+      [hint]="o.suspendedBusinesses ? ('overview.suspended' | transloco: { count: o.suspendedBusinesses }) : ''"
+    />
+    <app-stat-tile icon="badge" [value]="o.managers" [label]="'overview.managers' | transloco" />
+    <app-stat-tile icon="group" [value]="o.customers" [label]="'overview.customers' | transloco" />
+    <app-stat-tile icon="style" [value]="o.activeCards" [label]="'overview.activeCards' | transloco" />
+    <app-stat-tile icon="approval" [value]="o.stampsLast30Days" [label]="'overview.stamps30' | transloco" />
+  </section>
+
+  <section class="panel panel--flush">
+    <div class="panel-title">
+      <h2>{{ 'overview.recent' | transloco }}</h2>
+      <a mat-button routerLink="/admin/businesses">{{ 'overview.allBusinesses' | transloco }}</a>
+    </div>
+    <ul class="recent">
+      @for (b of o.recentBusinesses; track b.id) {
+        <li>
+          <a class="recent__row" [routerLink]="['/admin/businesses', b.id]">
+            <span class="recent__icon"><mat-icon>{{ categoryIcon(b.category) }}</mat-icon></span>
+            <span class="recent__main">
+              <span class="cell-main">{{ b.name }}</span>
+              <span class="cell-sub">
+                {{ 'category.' + b.category | transloco }}
+                @if (b.city) {
+                  · {{ b.city }}
+                }
+                · {{ 'common.createdAt' | transloco }} {{ b.createdAt | day }}
+              </span>
+            </span>
+            <app-status-chip [tone]="b.status === 'active' ? 'success' : 'error'">
+              {{ 'accountStatus.' + b.status | transloco }}
+            </app-status-chip>
+          </a>
+        </li>
+      } @empty {
+        <app-empty-state icon="storefront" [title]="'overview.noBusinesses' | transloco" />
+      }
+    </ul>
+  </section>
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Il mio profilo",
+  "profile": "Dati personali",
+  "password": "Password",
+  "currentPassword": "Password attuale",
+  "newPassword": "Nuova password",
+  "confirmPassword": "Ripeti la nuova password",
+  "changePassword": "Cambia password",
+  "passwordChanged": "Password aggiornata",
+  "role": {
+    "admin": "Amministratore",
+    "manager": "Gestore"
+  }
+}

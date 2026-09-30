@@ -1,0 +1,44 @@
+{
+  "title": "Managers",
+  "subtitle": "The businesses' users: they register customers, cards, payments and stamps.",
+  "new": "New manager",
+  "created": "Manager created. Give them their email and temporary password.",
+  "search": "Search by name, email or phone",
+  "empty": "No manager found",
+  "businessSuspended": "The business is suspended: the manager cannot sign in",
+  "col": {
+    "name": "Manager",
+    "lastLogin": "Last sign-in"
+  },
+  "form": {
+    "newTitle": "New manager",
+    "editTitle": "Edit manager",
+    "emailHint": "Used to sign in to the back office.",
+    "business": "Business",
+    "temporaryPassword": "Temporary password",
+    "temporaryPasswordHint": "Give it to the manager: they can change it in \"My profile\".",
+    "regenerate": "Generate another password"
+  },
+  "reset": {
+    "action": "Reset password",
+    "title": "Reset password",
+    "message": "{{ name }} will sign in with this new temporary password. The current one stops working.",
+    "copy": "Copy",
+    "confirm": "Reset",
+    "done": "Password reset"
+  },
+  "suspend": {
+    "action": "Suspend",
+    "title": "Suspend {{ name }}?",
+    "message": "{{ name }} will be signed out and blocked until you reactivate them.",
+    "confirm": "Suspend manager",
+    "done": "Manager suspended"
+  },
+  "reactivate": {
+    "action": "Reactivate",
+    "title": "Reactivate {{ name }}?",
+    "message": "{{ name }} will be able to sign in again, if their business is active.",
+    "confirm": "Reactivate manager",
+    "done": "Manager reactivated"
+  }
+}

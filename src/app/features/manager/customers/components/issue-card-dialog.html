@@ -1,0 +1,84 @@
+<h2 mat-dialog-title>
+  {{ 'customers.issue.title' | transloco: { name: data.customer.firstName + ' ' + data.customer.lastName } }}
+</h2>
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>{{ 'customers.issue.template' | transloco }}</mat-label>
+      <mat-select formControlName="templateId">
+        @for (t of data.templates; track t.id) {
+          <mat-option [value]="t.id">
+            {{ t.name }} · {{ 'program.' + t.program | transloco }} · {{ t.totalSlots }}
+          </mat-option>
+        }
+      </mat-select>
+      @if (template(); as t) {
+        <mat-hint>{{ 'programHint.' + t.program | transloco }}</mat-hint>
+      }
+    </mat-form-field>
+
+    <div class="form-grid">
+      <mat-form-field>
+        <mat-label>{{ 'customers.issue.number' | transloco }}</mat-label>
+        <input matInput formControlName="number" />
+        <mat-hint>{{ 'customers.issue.numberHint' | transloco }}</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'customers.issue.validUntil' | transloco }}</mat-label>
+        <input matInput type="date" formControlName="validUntil" />
+        <mat-hint>
+          {{
+            template()?.validityDays
+              ? ('customers.issue.validityDefault' | transloco: { days: template()?.validityDays })
+              : ('customers.issue.noExpiry' | transloco)
+          }}
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field>
+      <mat-label>{{ 'customers.issue.carried' | transloco }}</mat-label>
+      <input matInput type="number" min="0" formControlName="stampsAlreadyUsed" />
+      <mat-hint>{{ 'customers.issue.carriedHint' | transloco }}</mat-hint>
+      <mat-error>{{ 'validation.max' | transloco: { max: (template()?.totalSlots ?? 1) - 1 } }}</mat-error>
+    </mat-form-field>
+
+    @if (template()?.program === 'entries') {
+      <div class="dialog-section">
+        <div class="dialog-section__title">{{ 'customers.issue.payment' | transloco }}</div>
+        <mat-slide-toggle formControlName="paid">
+          {{ 'customers.issue.paidNow' | transloco: { price: (template()?.priceCents | money) } }}
+        </mat-slide-toggle>
+        @if (paid()) {
+          <div class="form-grid">
+            <mat-form-field>
+              <mat-label>{{ 'customers.payment.amount' | transloco }}</mat-label>
+              <input matInput type="number" min="0" step="0.5" formControlName="amount" />
+              <span matTextSuffix>{{ 'common.euro' | transloco }}</span>
+              <mat-hint>{{ 'customers.issue.partialHint' | transloco }}</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>{{ 'customers.payment.method' | transloco }}</mat-label>
+              <mat-select formControlName="method">
+                <mat-select-trigger>{{ 'paymentMethod.' + form.controls.method.value | transloco }}</mat-select-trigger>
+                @for (m of methods; track m) {
+                  <mat-option [value]="m">{{ 'paymentMethod.' + m | transloco }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        }
+      </div>
+    } @else if (template()?.program === 'monthly') {
+      <p class="dialog-hint">{{ 'customers.issue.monthlyHint' | transloco }}</p>
+    }
+
+    @if (errorKey(); as key) {
+      <p class="form-error" role="alert">{{ key | transloco }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
+    <button mat-flat-button type="submit" [disabled]="saving()">{{ 'customers.issue.confirm' | transloco }}</button>
+  </mat-dialog-actions>
+</form>

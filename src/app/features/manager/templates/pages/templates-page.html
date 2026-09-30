@@ -1,0 +1,82 @@
+<header class="page-header">
+  <div>
+    <h1>{{ 'templates.title' | transloco }}</h1>
+    <p>{{ 'templates.subtitle' | transloco }}</p>
+  </div>
+  <div class="page-header__actions">
+    <mat-slide-toggle [checked]="showArchived()" (change)="showArchived.set($event.checked)">
+      {{ 'templates.showArchived' | transloco }}
+    </mat-slide-toggle>
+    <button mat-flat-button (click)="edit(null)">
+      <mat-icon>add</mat-icon>{{ 'templates.new' | transloco }}
+    </button>
+  </div>
+</header>
+
+@if (templates.isLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (templates.error()) {
+  <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+    <button mat-stroked-button (click)="templates.reload()">{{ 'common.retry' | transloco }}</button>
+  </app-empty-state>
+} @else if (templates.value(); as list) {
+  @if (list.length === 0) {
+    <section class="panel">
+      <app-empty-state icon="dashboard_customize" [title]="'templates.empty' | transloco" [text]="'templates.emptyHint' | transloco">
+        <button mat-flat-button (click)="edit(null)">{{ 'templates.new' | transloco }}</button>
+      </app-empty-state>
+    </section>
+  } @else {
+    <div class="grid">
+      @for (t of list; track t.id) {
+        <article class="panel template" [class.template--archived]="t.archived">
+          <div class="template__head">
+            <span class="template__icon"><mat-icon>{{ icons[t.program] }}</mat-icon></span>
+            <div class="template__title">
+              <h2>{{ t.name }}</h2>
+              <span class="muted">{{ 'program.' + t.program | transloco }}</span>
+            </div>
+            @if (t.archived) {
+              <app-status-chip>{{ 'templates.archivedChip' | transloco }}</app-status-chip>
+            }
+          </div>
+          <dl class="dl">
+            <dt>{{ 'templates.slots' | transloco }}</dt>
+            <dd>{{ t.totalSlots }}</dd>
+            @if (t.program === 'loyalty') {
+              <dt>{{ 'templates.form.reward' | transloco }}</dt>
+              <dd>{{ t.reward }}</dd>
+            } @else {
+              <dt>{{ 'templates.form.price.' + t.program | transloco }}</dt>
+              <dd>{{ (t.priceCents | money) || ('common.none' | transloco) }}</dd>
+            }
+            <dt>{{ 'templates.validity' | transloco }}</dt>
+            <dd>
+              {{ t.validityDays ? ('templates.days' | transloco: { days: t.validityDays }) : ('templates.noExpiry' | transloco) }}
+            </dd>
+            <dt>{{ 'templates.holder' | transloco }}</dt>
+            <dd>{{ (t.printHolder ? 'common.yes' : 'common.no') | transloco }}</dd>
+            <dt>{{ 'templates.activeCards' | transloco }}</dt>
+            <dd>{{ t.activeCardCount }}</dd>
+          </dl>
+          <div class="template__actions">
+            @if (t.archived) {
+              <button mat-button (click)="setArchived(t, false)">
+                <mat-icon>unarchive</mat-icon>{{ 'templates.restore' | transloco }}
+              </button>
+            } @else {
+              <button mat-button (click)="setArchived(t, true)">
+                <mat-icon>archive</mat-icon>{{ 'templates.archive' | transloco }}
+              </button>
+            }
+            <button mat-stroked-button (click)="edit(t)">
+              <mat-icon>edit</mat-icon>{{ 'common.edit' | transloco }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+}

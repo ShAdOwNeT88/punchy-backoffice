@@ -1,0 +1,149 @@
+@if (store.isLoading() && !store.business()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (store.error()) {
+  <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+    <button mat-stroked-button (click)="store.reload()">{{ 'common.retry' | transloco }}</button>
+  </app-empty-state>
+} @else if (store.business(); as b) {
+  <header class="page-header">
+    <div>
+      <h1>{{ b.name }}</h1>
+      <p>{{ 'business.subtitle' | transloco }}</p>
+    </div>
+    <div class="page-header__actions">
+      <button mat-button (click)="discard()" [disabled]="form.pristine || saving()">
+        {{ 'business.discard' | transloco }}
+      </button>
+      <button mat-flat-button (click)="save()" [disabled]="form.pristine || saving()">
+        {{ 'common.save' | transloco }}
+      </button>
+    </div>
+  </header>
+
+  <div class="layout" [formGroup]="form">
+    <div class="stack">
+      <section class="panel">
+        <h2>{{ 'business.details' | transloco }}</h2>
+        <div class="form-grid">
+          <mat-form-field>
+            <mat-label>{{ 'business.category' | transloco }}</mat-label>
+            <mat-select formControlName="category">
+              <mat-select-trigger>{{ 'category.' + form.controls.category.value | transloco }}</mat-select-trigger>
+              @for (c of categories; track c) {
+                <mat-option [value]="c">
+                  <mat-icon>{{ categoryIcon(c) }}</mat-icon>{{ 'category.' + c | transloco }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'business.tagline' | transloco }}</mat-label>
+            <input matInput formControlName="tagline" maxlength="40" />
+            <mat-hint>{{ 'business.taglineHint' | transloco }}</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'business.contactName' | transloco }}</mat-label>
+            <input matInput formControlName="contactName" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'business.contactPhone' | transloco }}</mat-label>
+            <input matInput type="tel" formControlName="contactPhone" />
+            <mat-hint>{{ 'business.contactHint' | transloco }}</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'common.email' | transloco }}</mat-label>
+            <input matInput type="email" formControlName="email" />
+            <mat-error>{{ 'validation.email' | transloco }}</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'business.city' | transloco }}</mat-label>
+            <input matInput formControlName="city" />
+          </mat-form-field>
+          <mat-form-field class="span-2">
+            <mat-label>{{ 'business.address' | transloco }}</mat-label>
+            <input matInput formControlName="address" />
+          </mat-form-field>
+        </div>
+        <p class="muted small">
+          {{ 'business.adminOwned' | transloco: { vat: b.vatNumber || ('common.none' | transloco) } }}
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>{{ 'business.appearance' | transloco }}</h2>
+
+        <div class="field-label">{{ 'business.logo' | transloco }}</div>
+        <div class="logo-row">
+          <span class="logo card-style--{{ form.controls.style.value }}">
+            @if (b.logoUrl) {
+              <img [src]="b.logoUrl" [alt]="'business.logo' | transloco" />
+            } @else {
+              <mat-icon>{{ emblemIcon(form.controls.emblem.value, form.controls.category.value) }}</mat-icon>
+            }
+          </span>
+          <input #logoInput class="hidden-input" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" (change)="onLogo($event)" [disabled]="uploading()" />
+          <button mat-stroked-button type="button" (click)="logoInput.click()" [disabled]="uploading()">
+            <mat-icon>upload</mat-icon>{{ (b.logoUrl ? 'business.replaceLogo' : 'business.uploadLogo') | transloco }}
+          </button>
+          @if (b.logoUrl) {
+            <button mat-button type="button" (click)="removeLogo()" [disabled]="uploading()">
+              {{ 'business.removeLogo' | transloco }}
+            </button>
+          }
+        </div>
+        <p class="muted small">{{ 'business.logoHint' | transloco }}</p>
+
+        <mat-form-field class="full">
+          <mat-label>{{ 'business.emblem' | transloco }}</mat-label>
+          <mat-select formControlName="emblem">
+            <mat-select-trigger>{{ 'emblem.' + form.controls.emblem.value | transloco }}</mat-select-trigger>
+            <mat-option value="none">
+              <mat-icon>{{ categoryIcon(form.controls.category.value) }}</mat-icon>{{ 'emblem.none' | transloco }}
+            </mat-option>
+            @for (e of emblems; track e) {
+              <mat-option [value]="e"><mat-icon>{{ emblemIcon(e) }}</mat-icon>{{ 'emblem.' + e | transloco }}</mat-option>
+            }
+          </mat-select>
+          <mat-hint>{{ 'business.emblemHint' | transloco }}</mat-hint>
+        </mat-form-field>
+
+        <div class="field-label" id="style-label">{{ 'business.colors' | transloco }}</div>
+        <div class="swatches" role="radiogroup" aria-labelledby="style-label">
+          @for (s of styles; track s) {
+            <button
+              type="button"
+              role="radio"
+              class="swatch card-style--{{ s }}"
+              [class.swatch--on]="form.controls.style.value === s"
+              [attr.aria-checked]="form.controls.style.value === s"
+              [attr.aria-label]="'cardStyle.' + s | transloco"
+              (click)="form.controls.style.setValue(s); form.markAsDirty()"
+            ></button>
+          }
+        </div>
+
+        <div class="field-label">{{ 'business.design' | transloco }}</div>
+        <mat-button-toggle-group formControlName="design" [attr.aria-label]="'business.design' | transloco">
+          <mat-button-toggle value="gradient">{{ 'cardDesign.gradient' | transloco }}</mat-button-toggle>
+          <mat-button-toggle value="paper">{{ 'cardDesign.paper' | transloco }}</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <div class="field-label">{{ 'business.stampStyle' | transloco }}</div>
+        <mat-button-toggle-group formControlName="stampStyle" [attr.aria-label]="'business.stampStyle' | transloco">
+          <mat-button-toggle value="round">{{ 'stampStyle.round' | transloco }}</mat-button-toggle>
+          <mat-button-toggle value="signature">{{ 'stampStyle.signature' | transloco }}</mat-button-toggle>
+        </mat-button-toggle-group>
+      </section>
+    </div>
+
+    <aside class="panel preview">
+      <h2>{{ 'business.preview' | transloco }}</h2>
+      @if (preview(); as p) {
+        <app-card-preview [card]="p" />
+      }
+      <p class="muted small">{{ 'business.previewHint' | transloco }}</p>
+    </aside>
+  </div>
+}

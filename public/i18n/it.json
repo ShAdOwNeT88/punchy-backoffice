@@ -1,0 +1,176 @@
+{
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "create": "Crea",
+    "add": "Aggiungi",
+    "back": "Indietro",
+    "retry": "Riprova",
+    "search": "Cerca",
+    "all": "Tutti",
+    "actions": "Azioni",
+    "open": "Apri",
+    "loading": "Caricamento…",
+    "loadError": "Impossibile caricare i dati.",
+    "saved": "Modifiche salvate",
+    "none": "—",
+    "yes": "Sì",
+    "no": "No",
+    "optional": "facoltativo",
+    "status": "Stato",
+    "email": "Email",
+    "phone": "Telefono",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "initials": "Iniziali",
+    "initialsHint": "Stampate sui timbri, come la sigla sulla tessera di carta.",
+    "notes": "Note",
+    "createdAt": "Creato il",
+    "euro": "€"
+  },
+  "nav": {
+    "overview": "Panoramica",
+    "businesses": "Attività",
+    "managers": "Gestori",
+    "dashboard": "Bacheca",
+    "cards": "Tessere",
+    "customers": "Clienti",
+    "templates": "Tipi di tessera",
+    "business": "La mia attività",
+    "account": "Il mio profilo",
+    "signOut": "Esci",
+    "menu": "Menu",
+    "language": "Lingua",
+    "adminArea": "Amministrazione"
+  },
+  "languages": {
+    "it": "Italiano",
+    "en": "English"
+  },
+  "validation": {
+    "required": "Campo obbligatorio",
+    "email": "Inserisci un'email valida",
+    "minLength": "Almeno {{ min }} caratteri",
+    "maxLength": "Al massimo {{ max }} caratteri",
+    "min": "Il valore minimo è {{ min }}",
+    "max": "Il valore massimo è {{ max }}",
+    "integer": "Inserisci un numero intero",
+    "amount": "Inserisci un importo valido",
+    "mismatch": "Le password non coincidono"
+  },
+  "errors": {
+    "network": "Server non raggiungibile. Controlla la connessione e riprova.",
+    "invalid_credentials": "Email o password non corretti.",
+    "account_suspended": "Il tuo account è sospeso. Contatta l'amministratore.",
+    "business_suspended": "L'attività per cui lavori è sospesa. Contatta l'amministratore.",
+    "unauthorized": "La sessione è scaduta. Accedi di nuovo.",
+    "forbidden": "Non hai i permessi per questa operazione.",
+    "not_found": "L'elemento non esiste più.",
+    "validation_error": "Alcuni dati non sono validi.",
+    "wrong_password": "La password attuale non è corretta.",
+    "email_taken": "Questa email è già usata da un altro account.",
+    "card_number_taken": "Esiste già una tessera con questo numero.",
+    "template_archived": "Questo tipo di tessera è archiviato.",
+    "card_full": "La tessera è piena.",
+    "card_not_active": "La tessera non è attiva.",
+    "period_already_paid": "Questa mensilità è già stata registrata.",
+    "reward_not_ready": "Il premio non è ancora disponibile.",
+    "customer_has_active_cards": "Il cliente ha tessere attive: annullale o completale prima di eliminarlo.",
+    "logo_invalid": "Il logo deve essere PNG, JPEG, SVG o WebP e pesare al massimo 1 MB.",
+    "unknown": "Qualcosa è andato storto. Riprova."
+  },
+  "accountStatus": {
+    "active": "Attivo",
+    "suspended": "Sospeso"
+  },
+  "category": {
+    "pool": "Piscina",
+    "gym": "Palestra",
+    "studio": "Studio / corsi",
+    "cafe": "Bar / caffetteria",
+    "restaurant": "Ristorante",
+    "shop": "Negozio",
+    "beauty": "Estetica / parrucchiere",
+    "other": "Altro"
+  },
+  "emblem": {
+    "none": "Icona della categoria",
+    "leaf": "Foglia",
+    "wave": "Onda",
+    "star": "Stella",
+    "heart": "Cuore",
+    "bolt": "Fulmine",
+    "crown": "Corona"
+  },
+  "cardStyle": {
+    "ocean": "Oceano",
+    "ember": "Brace",
+    "violet": "Viola",
+    "forest": "Foresta",
+    "coffee": "Caffè",
+    "rose": "Rosa"
+  },
+  "cardDesign": {
+    "gradient": "Colore pieno",
+    "paper": "Tessera stampata"
+  },
+  "stampStyle": {
+    "round": "Timbro tondo",
+    "signature": "Sigla a penna"
+  },
+  "program": {
+    "entries": "Ingressi",
+    "monthly": "Mensilità",
+    "loyalty": "Fedeltà"
+  },
+  "programHint": {
+    "entries": "Pacchetto di ingressi prepagati: una casella per ingresso.",
+    "monthly": "Abbonamento: una casella per ogni mensilità pagata.",
+    "loyalty": "Raccolta timbri: una casella per acquisto, a tessera piena il premio."
+  },
+  "cardStatus": {
+    "active": "Attiva",
+    "completed": "Completata",
+    "expired": "Scaduta",
+    "cancelled": "Annullata"
+  },
+  "paymentMethod": {
+    "cash": "Contanti",
+    "card": "Carta / POS",
+    "transfer": "Bonifico",
+    "other": "Altro"
+  },
+  "cardPreview": {
+    "front": "Fronte",
+    "back": "Retro",
+    "side": "Lato della tessera",
+    "flip": "Gira la tessera",
+    "holder": "Titolare",
+    "reward": "Premio",
+    "info": "Info",
+    "cardNumber": "TESSERA N.",
+    "validUntil": "Scade il",
+    "header": {
+      "entries": "INGRESSI",
+      "monthly": "MENSILITÀ",
+      "loyalty": "RACCOLTA TIMBRI"
+    },
+    "sampleHolder": "Mario Rossi"
+  },
+  "progress": {
+    "entries": "{{ used }} di {{ total }} ingressi",
+    "monthly": "{{ used }} di {{ total }} mesi pagati",
+    "loyalty": "{{ used }} di {{ total }} timbri"
+  },
+  "paginator": {
+    "itemsPerPage": "Per pagina",
+    "next": "Pagina successiva",
+    "previous": "Pagina precedente",
+    "first": "Prima pagina",
+    "last": "Ultima pagina",
+    "range": "{{ start }} – {{ end }} di {{ length }}"
+  }
+}

@@ -1,0 +1,52 @@
+h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--app-space-3);
+}
+
+.stamp-button {
+  min-height: var(--app-space-10);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, var(--app-card-width)) minmax(0, 1fr);
+  gap: var(--app-space-6);
+  align-items: start;
+  margin-bottom: var(--app-space-6);
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.preview {
+  display: flex;
+  justify-content: center;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-4);
+
+  h2 {
+    margin: 0;
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--app-space-2);
+  }
+}
+
+.history {
+  margin-bottom: var(--app-space-6);
+}
+
+.panel-heading {
+  padding: var(--app-space-4) var(--app-space-5) var(--app-space-2);
+}

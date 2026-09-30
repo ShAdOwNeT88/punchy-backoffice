@@ -1,0 +1,215 @@
+<a class="back-link" routerLink="/manager/cards">
+  <mat-icon>arrow_back</mat-icon>{{ 'nav.cards' | transloco }}
+</a>
+
+@if (card.isLoading() && !card.value()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (card.error()) {
+  <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+    <button mat-stroked-button (click)="card.reload()">{{ 'common.retry' | transloco }}</button>
+  </app-empty-state>
+} @else if (card.value(); as c) {
+  <header class="page-header">
+    <div>
+      <h1>
+        {{ c.templateName }}
+        @if (c.rewardReady) {
+          <app-status-chip tone="success">{{ 'customers.card.rewardReady' | transloco }}</app-status-chip>
+        } @else {
+          <app-status-chip [tone]="statusTone(c.status)">{{ 'cardStatus.' + c.status | transloco }}</app-status-chip>
+        }
+      </h1>
+      <p>
+        N. {{ c.number }} ·
+        <a [routerLink]="['/manager/customers', c.customer.id]">{{ c.customer.firstName }} {{ c.customer.lastName }}</a>
+        · {{ 'customers.card.issued' | transloco: { date: (c.issuedAt | day) } }}
+      </p>
+    </div>
+    <div class="page-header__actions">
+      <button mat-icon-button [matMenuTriggerFor]="more" [attr.aria-label]="'common.actions' | transloco">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #more="matMenu" xPosition="before">
+        <button mat-menu-item (click)="edit(c)">
+          <mat-icon>edit</mat-icon>{{ 'customers.card.edit' | transloco }}
+        </button>
+        @if (c.status !== 'cancelled') {
+          <button mat-menu-item (click)="pay(c)">
+            <mat-icon>payments</mat-icon>{{ 'customers.payment.action' | transloco }}
+          </button>
+          <button mat-menu-item (click)="cancel(c)">
+            <mat-icon>block</mat-icon>{{ 'customers.cancel.action' | transloco }}
+          </button>
+        }
+      </mat-menu>
+      @if (c.rewardReady) {
+        <button mat-stroked-button (click)="redeem(c, false)">{{ 'customers.redeem.only' | transloco }}</button>
+        <button mat-flat-button (click)="redeem(c, true)">
+          <mat-icon>redeem</mat-icon>{{ 'customers.redeem.andRenew' | transloco }}
+        </button>
+      } @else if (c.status === 'active') {
+        @if (due() > 0) {
+          <button mat-stroked-button (click)="pay(c)">
+            <mat-icon>payments</mat-icon>{{ 'customers.payment.action' | transloco }}
+          </button>
+        }
+        <button mat-flat-button class="stamp-button" (click)="stamp(c)">
+          <mat-icon>approval</mat-icon>{{ 'customers.stamp.action.' + c.program | transloco }}
+        </button>
+      }
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="panel preview">
+      @if (preview(); as p) {
+        <app-card-preview [card]="p" />
+      }
+    </section>
+
+    <section class="panel summary">
+      <h2>{{ 'customers.card.summary' | transloco }}</h2>
+      <app-progress-meter
+        [value]="c.stamps.length"
+        [max]="c.totalSlots"
+        [done]="c.rewardReady || c.status === 'completed'"
+        [label]="'progress.' + c.program | transloco: { used: c.stamps.length, total: c.totalSlots }"
+      />
+      <dl class="dl">
+        @if (c.program === 'loyalty') {
+          <dt>{{ 'cardPreview.reward' | transloco }}</dt>
+          <dd>{{ c.reward }}</dd>
+          <dt>{{ 'customers.card.toReward' | transloco }}</dt>
+          <dd>{{ c.redeemedAt ? ('customers.card.redeemedOn' | transloco: { date: (c.redeemedAt | day) }) : remaining() }}</dd>
+        } @else {
+          <dt>{{ 'customers.card.remaining.' + c.program | transloco }}</dt>
+          <dd>{{ remaining() }}</dd>
+        }
+        @if (c.program === 'entries' && c.priceCents) {
+          <dt>{{ 'customers.card.price' | transloco }}</dt>
+          <dd>{{ c.priceCents | money }}</dd>
+        }
+        @if (c.program !== 'loyalty') {
+          <dt>{{ 'customers.card.paid' | transloco }}</dt>
+          <dd>
+            {{ c.paidCents | money }}
+            @if (due() > 0) {
+              <app-status-chip tone="error">{{ 'customers.card.due' | transloco: { amount: (due() | money) } }}</app-status-chip>
+            }
+          </dd>
+        }
+        <dt>{{ 'customers.issue.validUntil' | transloco }}</dt>
+        <dd>{{ (c.validUntil | day: 'long') || ('customers.issue.noExpiry' | transloco) }}</dd>
+        <dt>{{ 'customers.card.holderPrinted' | transloco }}</dt>
+        <dd>{{ (c.printHolder ? 'common.yes' : 'common.no') | transloco }}</dd>
+      </dl>
+    </section>
+  </div>
+
+  <section class="panel panel--flush history">
+    <h2 class="panel-heading">{{ 'customers.history.stamps' | transloco }}</h2>
+    @if (history().length === 0) {
+      <app-empty-state icon="approval" [title]="'customers.history.noStamps' | transloco" />
+    } @else {
+      <div class="table-scroll">
+        <table mat-table [dataSource]="history()">
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>{{ 'customers.stamp.date' | transloco }}</th>
+            <td mat-cell *matCellDef="let s">{{ s.date | day }}</td>
+          </ng-container>
+          <ng-container matColumnDef="period">
+            <th mat-header-cell *matHeaderCellDef>{{ 'customers.stamp.period' | transloco }}</th>
+            <td mat-cell *matCellDef="let s">{{ (s.period | month) || ('common.none' | transloco) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="operator">
+            <th mat-header-cell *matHeaderCellDef>{{ 'customers.history.operator' | transloco }}</th>
+            <td mat-cell *matCellDef="let s">{{ s.operatorName || s.operatorInitials || ('common.none' | transloco) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>{{ 'customers.payment.amount' | transloco }}</th>
+            <td mat-cell *matCellDef="let s">{{ (s.amountCents | money) || ('common.none' | transloco) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="note">
+            <th mat-header-cell *matHeaderCellDef>{{ 'common.notes' | transloco }}</th>
+            <td mat-cell *matCellDef="let s">
+              {{ s.note === 'carried_over' ? ('customers.history.carriedOver' | transloco) : s.note }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef><span class="cdk-visually-hidden">{{ 'common.actions' | transloco }}</span></th>
+            <td mat-cell *matCellDef="let s">
+              @if (!c.redeemedAt && c.status !== 'cancelled') {
+                <button
+                  mat-icon-button
+                  (click)="undo(c, s)"
+                  [matTooltip]="'customers.undo.action' | transloco"
+                  [attr.aria-label]="'customers.undo.action' | transloco"
+                >
+                  <mat-icon>undo</mat-icon>
+                </button>
+              }
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="stampColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: stampColumns"></tr>
+        </table>
+      </div>
+    }
+  </section>
+
+  @if (c.program !== 'loyalty') {
+    <section class="panel panel--flush history">
+      <h2 class="panel-heading">{{ 'customers.history.payments' | transloco }}</h2>
+      @if (payments().length === 0) {
+        <app-empty-state icon="payments" [title]="'customers.history.noPayments' | transloco" />
+      } @else {
+        <div class="table-scroll">
+          <table mat-table [dataSource]="payments()">
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>{{ 'customers.stamp.date' | transloco }}</th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.date | day }}
+                @if (p.period) {
+                  <div class="cell-sub">{{ p.period | month }}</div>
+                }
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="amount">
+              <th mat-header-cell *matHeaderCellDef>{{ 'customers.payment.amount' | transloco }}</th>
+              <td mat-cell *matCellDef="let p" class="cell-main">{{ p.amountCents | money }}</td>
+            </ng-container>
+            <ng-container matColumnDef="method">
+              <th mat-header-cell *matHeaderCellDef>{{ 'customers.payment.method' | transloco }}</th>
+              <td mat-cell *matCellDef="let p">{{ 'paymentMethod.' + p.method | transloco }}</td>
+            </ng-container>
+            <ng-container matColumnDef="operator">
+              <th mat-header-cell *matHeaderCellDef>{{ 'customers.history.operator' | transloco }}</th>
+              <td mat-cell *matCellDef="let p">{{ p.operatorName || ('common.none' | transloco) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="note">
+              <th mat-header-cell *matHeaderCellDef>{{ 'common.notes' | transloco }}</th>
+              <td mat-cell *matCellDef="let p">{{ p.note }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef><span class="cdk-visually-hidden">{{ 'common.actions' | transloco }}</span></th>
+              <td mat-cell *matCellDef="let p">
+                <button
+                  mat-icon-button
+                  (click)="deletePayment(c, p)"
+                  [matTooltip]="'common.delete' | transloco"
+                  [attr.aria-label]="'common.delete' | transloco"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="paymentColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: paymentColumns"></tr>
+          </table>
+        </div>
+      }
+    </section>
+  }
+}

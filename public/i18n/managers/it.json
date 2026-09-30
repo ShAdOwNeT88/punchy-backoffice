@@ -1,0 +1,44 @@
+{
+  "title": "Gestori",
+  "subtitle": "Gli utenti delle attività: registrano clienti, tessere, pagamenti e vidimazioni.",
+  "new": "Nuovo gestore",
+  "created": "Gestore creato. Comunicagli email e password temporanea.",
+  "search": "Cerca per nome, email o telefono",
+  "empty": "Nessun gestore trovato",
+  "businessSuspended": "L'attività è sospesa: il gestore non può accedere",
+  "col": {
+    "name": "Gestore",
+    "lastLogin": "Ultimo accesso"
+  },
+  "form": {
+    "newTitle": "Nuovo gestore",
+    "editTitle": "Modifica gestore",
+    "emailHint": "La userà per accedere al backoffice.",
+    "business": "Attività",
+    "temporaryPassword": "Password temporanea",
+    "temporaryPasswordHint": "Comunicala al gestore: potrà cambiarla da \"Il mio profilo\".",
+    "regenerate": "Genera un'altra password"
+  },
+  "reset": {
+    "action": "Reimposta password",
+    "title": "Reimposta password",
+    "message": "{{ name }} accederà con questa nuova password temporanea. Quella attuale smetterà di funzionare.",
+    "copy": "Copia",
+    "confirm": "Reimposta",
+    "done": "Password reimpostata"
+  },
+  "suspend": {
+    "action": "Sospendi",
+    "title": "Sospendere {{ name }}?",
+    "message": "{{ name }} verrà disconnesso e non potrà più accedere finché non lo riattivi.",
+    "confirm": "Sospendi gestore",
+    "done": "Gestore sospeso"
+  },
+  "reactivate": {
+    "action": "Riattiva",
+    "title": "Riattivare {{ name }}?",
+    "message": "{{ name }} potrà di nuovo accedere, se la sua attività è attiva.",
+    "confirm": "Riattiva gestore",
+    "done": "Gestore riattivato"
+  }
+}

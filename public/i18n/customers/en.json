@@ -1,0 +1,145 @@
+{
+  "title": "Customers",
+  "subtitle": "Your customers and their cards.",
+  "new": "New customer",
+  "created": "Customer created",
+  "search": "Search by name, email, phone or card number",
+  "empty": "No customer found",
+  "emptyHint": "Add a customer to issue their first card.",
+  "noEmail": "No email: no app",
+  "since": "Customer since {{ date }}",
+  "contact": "Contact",
+  "cards": "Cards",
+  "noCards": "No cards",
+  "appHint": "Sees their cards in the Punchy app by signing in with {{ email }}.",
+  "noAppHint": "Without an email the customer cannot see their cards in the app: add it any time.",
+  "col": {
+    "name": "Customer",
+    "activeCards": "Active cards",
+    "lastVisit": "Last visit"
+  },
+  "form": {
+    "newTitle": "New customer",
+    "editTitle": "Edit customer",
+    "emailHint": "Lets the customer see their cards in the app.",
+    "birthDate": "Date of birth"
+  },
+  "delete": {
+    "title": "Delete {{ name }}?",
+    "message": "The customer and the history of their cards will be deleted. This cannot be undone.",
+    "done": "Customer deleted"
+  },
+  "cardsTitle": "Cards",
+  "cardsSubtitle": "Every card issued. Open a card to stamp it or record a payment.",
+  "cardsSearch": "Card number or customer",
+  "noCardsFound": "No card found",
+  "group": {
+    "label": "Card type",
+    "all": "All",
+    "membership": "Memberships",
+    "loyalty": "Loyalty"
+  },
+  "issue": {
+    "action": "Issue card",
+    "title": "New card for {{ name }}",
+    "template": "Card type",
+    "number": "Card number",
+    "numberHint": "Empty: automatic, or the paper one.",
+    "validUntil": "Expiry",
+    "validityDefault": "Empty: {{ days }} days from today.",
+    "noExpiry": "No expiry",
+    "carried": "Boxes already stamped on the paper card",
+    "carriedHint": "For customers moving from a paper card without losing stamps.",
+    "payment": "Payment",
+    "paidNow": "Paid now ({{ price }})",
+    "partialHint": "A deposit works too.",
+    "monthlyHint": "Monthly fees are recorded by stamping the card, month by month.",
+    "confirm": "Issue",
+    "done": "Card no. {{ number }} issued: the customer finds it in the app.",
+    "noTemplates": "Create a card type first."
+  },
+  "card": {
+    "until": "expires {{ date }}",
+    "rewardReady": "Reward ready!",
+    "due": "{{ amount }} to pay",
+    "issued": "issued {{ date }}",
+    "edit": "Edit number or expiry",
+    "editTitle": "Edit card",
+    "validUntilHint": "Empty: no expiry.",
+    "summary": "Summary",
+    "toReward": "Stamps to the reward",
+    "redeemedOn": "Handed out {{ date }}",
+    "remaining": {
+      "entries": "Entries left",
+      "monthly": "Months left"
+    },
+    "price": "Price",
+    "paid": "Paid",
+    "holderPrinted": "Name on the card"
+  },
+  "stamp": {
+    "action": {
+      "entries": "Record entry",
+      "monthly": "Record month",
+      "loyalty": "Add stamp"
+    },
+    "title": {
+      "entries": "Record entry",
+      "monthly": "Record monthly fee",
+      "loyalty": "Add stamp"
+    },
+    "lead": "{{ name }}, card no. {{ number }}: {{ left }} boxes left.",
+    "period": "Month",
+    "alreadyPaid": "already paid",
+    "date": "Date",
+    "withPayment": "Also record the payment",
+    "confirm": "Stamp",
+    "done": "Card stamped",
+    "doneReward": "Card full: reward to hand out!"
+  },
+  "payment": {
+    "action": "Record payment",
+    "title": "Record payment",
+    "amount": "Amount",
+    "method": "Method",
+    "confirm": "Record",
+    "done": "Payment recorded"
+  },
+  "redeem": {
+    "only": "Hand out reward",
+    "andRenew": "Hand out and new card",
+    "title": "Hand out the reward?",
+    "message": "Confirm you handed out \"{{ reward }}\"? The card will be closed.",
+    "messageRenew": "Confirm you handed out \"{{ reward }}\"? The card will be closed and a new, empty one issued.",
+    "confirm": "Handed out",
+    "done": "Reward handed out"
+  },
+  "cancel": {
+    "action": "Cancel card",
+    "title": "Cancel card no. {{ number }}?",
+    "message": "The card stays in the history but can no longer be stamped.",
+    "confirm": "Cancel card",
+    "done": "Card cancelled"
+  },
+  "undo": {
+    "action": "Undo stamp",
+    "title": "Undo the stamp?",
+    "message": "The stamp of {{ date }} will be removed from the card.",
+    "messagePayment": "The stamp of {{ date }} will be removed from the card with the payment recorded together with it.",
+    "confirm": "Undo stamp",
+    "done": "Stamp undone"
+  },
+  "deletePayment": {
+    "title": "Delete the payment?",
+    "message": "The payment of {{ amount }} on {{ date }} will be deleted.",
+    "done": "Payment deleted"
+  },
+  "history": {
+    "stamps": "Stamps",
+    "payments": "Payments",
+    "noStamps": "No stamps yet",
+    "noPayments": "No payments recorded",
+    "operator": "Staff",
+    "carriedOver": "From the paper card"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "greeting": "Ciao {{ name }}",
+  "subtitle": "Ecco cosa succede oggi nella tua attività.",
+  "newCustomer": "Nuovo cliente",
+  "lookup": "Trova una tessera",
+  "lookupHint": "Numero della tessera, nome, email o telefono del cliente.",
+  "lookupAction": "Cerca",
+  "stampsToday": "Vidimazioni oggi",
+  "activeCards": "Tessere attive",
+  "customers": "Clienti",
+  "revenueMonth": "Incassato questo mese",
+  "attention": "Da gestire",
+  "attentionHint": "Premi da consegnare, mensilità da incassare, scadenze e saldi.",
+  "allGood": "Tutto in ordine: nessuna tessera richiede attenzione.",
+  "reason": {
+    "reward_ready": "Premio da consegnare",
+    "month_unpaid": "Mese in corso non pagato",
+    "expiring_soon": "Scade il {{ date }}",
+    "balance_due": "Da saldare {{ amount }}",
+    "almost_used_up": "Ancora {{ left }} ingressi"
+  }
+}

@@ -1,0 +1,108 @@
+// Every colour and dimension of the application. No hex value or raw length appears outside
+// `src/styles/`; components read these custom properties. Values mirror the mobile app's
+// `lib/shared/theme/`.
+
+:root {
+  // Brand and surfaces
+  --app-primary: #2451e6;
+  --app-primary-dark: #14307f;
+  --app-secondary: #00b3a4;
+  --app-background: #f4f6fb;
+  --app-surface: #ffffff;
+  --app-surface-muted: #e9edf5;
+  --app-text: #121826;
+  --app-text-muted: #5b6475;
+  --app-outline: #d5dbe7;
+  --app-error: #d64545;
+  --app-success: #1e9e6a;
+  --app-warning: #c77700;
+  --app-success-soft: #e3f5ec;
+  --app-error-soft: #fbe7e7;
+  --app-warning-soft: #fff2dc;
+  --app-info-soft: #e5ebff;
+  --app-neutral-soft: #eceff4;
+  --app-on-dark: #ffffff;
+  --app-on-dark-muted: rgb(255 255 255 / 70%);
+  --app-glass: rgb(255 255 255 / 16%);
+  --app-glass-border: rgb(255 255 255 / 30%);
+  --app-shadow: rgb(18 24 38 / 20%);
+  --app-shadow-soft: rgb(18 24 38 / 8%);
+  --app-paper: #fbfaf6;
+  --app-paper-ink: #1f2937;
+  --app-paper-watermark: #b8bec9;
+  --app-print-white: #ffffff;
+  --app-print-border: #e3e6ec;
+  --app-pen-ink: #1b2250;
+  --app-brand-gradient: linear-gradient(135deg, #0b1b4d, #1d3fb8 55%, #12a5c9);
+
+  // Spacing, radii, sizes
+  --app-space-1: 4px;
+  --app-space-2: 8px;
+  --app-space-3: 12px;
+  --app-space-4: 16px;
+  --app-space-5: 20px;
+  --app-space-6: 24px;
+  --app-space-8: 32px;
+  --app-space-10: 40px;
+  --app-radius-sm: 8px;
+  --app-radius-md: 12px;
+  --app-radius-lg: 18px;
+  --app-radius-pill: 999px;
+  --app-nav-width: 256px;
+  --app-page-max: 1240px;
+  --app-brand-mark: 40px;
+  --app-avatar: 28px;
+  --app-login-width: 420px;
+  --app-dialog-width: 560px;
+  --app-card-width: 340px;
+  --app-card-ratio: 1.586;
+  --app-stamp-size: 44px;
+  --app-tile-min: 200px;
+  --app-column-min: 360px;
+  --app-logo-size: 56px;
+  --app-swatch: 36px;
+  --app-border: 1px;
+}
+
+// Card palettes: the gradient of the front and the ink of the stamps.
+.card-style--ocean {
+  --card-g1: #0b4f71;
+  --card-g2: #1b8fb5;
+  --card-g3: #5fd0e0;
+  --card-ink: #1b6fa0;
+}
+
+.card-style--ember {
+  --card-g1: #2b1b3d;
+  --card-g2: #c2410c;
+  --card-g3: #f59e0b;
+  --card-ink: #c2410c;
+}
+
+.card-style--violet {
+  --card-g1: #3b1c6b;
+  --card-g2: #7c3aed;
+  --card-g3: #c084fc;
+  --card-ink: #6d28d9;
+}
+
+.card-style--forest {
+  --card-g1: #064e3b;
+  --card-g2: #059669;
+  --card-g3: #6ee7b7;
+  --card-ink: #047857;
+}
+
+.card-style--coffee {
+  --card-g1: #2b1a12;
+  --card-g2: #6f4e37;
+  --card-g3: #c89f7c;
+  --card-ink: #6f4e37;
+}
+
+.card-style--rose {
+  --card-g1: #5b1a3a;
+  --card-g2: #db2777;
+  --card-g3: #f9a8d4;
+  --card-ink: #be185d;
+}

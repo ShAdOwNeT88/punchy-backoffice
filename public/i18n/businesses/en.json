@@ -1,0 +1,54 @@
+{
+  "title": "Businesses",
+  "subtitle": "The venues using Punchy. Suspending a business blocks all of its managers.",
+  "new": "New business",
+  "created": "Business created",
+  "search": "Search by name, city, email or VAT number",
+  "empty": "No business found",
+  "col": {
+    "name": "Business",
+    "category": "Category",
+    "managers": "Managers",
+    "customers": "Customers",
+    "cards": "Active cards"
+  },
+  "form": {
+    "newTitle": "New business",
+    "editTitle": "Edit business",
+    "name": "Business name",
+    "nameHint": "As shown on the customers' card.",
+    "category": "Category",
+    "tagline": "Tagline",
+    "taglineHint": "E.g. \"swimming\", \"roasters since 1962\".",
+    "contactName": "Contact person",
+    "contactPhone": "Contact phone",
+    "vatNumber": "VAT number",
+    "address": "Address",
+    "city": "City"
+  },
+  "detail": {
+    "info": "Business details",
+    "card": "Card appearance",
+    "cardHint": "Colours, logo and style are chosen by the manager in \"My business\".",
+    "managers": "Managers",
+    "manager": "Manager",
+    "addManager": "Add manager",
+    "noManagers": "No managers: add one so the business can use Punchy.",
+    "lastLogin": "Last sign-in",
+    "suspendedBanner": "Business suspended: its managers cannot sign in until you reactivate it."
+  },
+  "suspend": {
+    "action": "Suspend",
+    "title": "Suspend {{ name }}?",
+    "message": "Every manager of {{ name }} will be signed out and blocked until the business is reactivated. Customers and cards are kept.",
+    "confirm": "Suspend business",
+    "done": "Business suspended"
+  },
+  "reactivate": {
+    "action": "Reactivate",
+    "title": "Reactivate {{ name }}?",
+    "message": "The managers of {{ name }} will be able to sign in again, except those suspended individually.",
+    "confirm": "Reactivate business",
+    "done": "Business reactivated"
+  }
+}

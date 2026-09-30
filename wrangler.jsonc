@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "punchy-backoffice",
+  "compatibility_date": "2026-09-30",
+  // Static single-page app: every unknown path serves index.html and the Angular router takes over.
+  "assets": {
+    "directory": "./dist/punchy-backoffice/browser",
+    "not_found_handling": "single-page-application"
+  }
+}

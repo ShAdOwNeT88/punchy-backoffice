@@ -1,0 +1,126 @@
+<header class="page-header">
+  <div>
+    <h1>{{ 'managers.title' | transloco }}</h1>
+    <p>{{ 'managers.subtitle' | transloco }}</p>
+  </div>
+  <div class="page-header__actions">
+    <button mat-flat-button (click)="create()" [disabled]="!businesses.value()">
+      <mat-icon>person_add</mat-icon>
+      {{ 'managers.new' | transloco }}
+    </button>
+  </div>
+</header>
+
+<section class="panel panel--flush">
+  <div class="toolbar-row">
+    <mat-form-field class="grow">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-label>{{ 'managers.search' | transloco }}</mat-label>
+      <input matInput [formControl]="search" type="search" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'managers.form.business' | transloco }}</mat-label>
+      <mat-select [value]="business() || 'all'" (valueChange)="setBusiness($event === 'all' ? '' : $event)">
+        <mat-option value="all">{{ 'common.all' | transloco }}</mat-option>
+        @for (b of businesses.value()?.items ?? []; track b.id) {
+          <mat-option [value]="b.id">{{ b.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'common.status' | transloco }}</mat-label>
+      <mat-select [value]="status() || 'all'" (valueChange)="setStatus($event === 'all' ? '' : $event)">
+        <mat-select-trigger>{{ (status() ? 'accountStatus.' + status() : 'common.all') | transloco }}</mat-select-trigger>
+        <mat-option value="all">{{ 'common.all' | transloco }}</mat-option>
+        <mat-option value="active">{{ 'accountStatus.active' | transloco }}</mat-option>
+        <mat-option value="suspended">{{ 'accountStatus.suspended' | transloco }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (managers.isLoading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (managers.error()) {
+    <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+      <button mat-stroked-button (click)="managers.reload()">{{ 'common.retry' | transloco }}</button>
+    </app-empty-state>
+  } @else if (managers.value(); as result) {
+    @if (result.total === 0) {
+      <app-empty-state icon="badge" [title]="'managers.empty' | transloco" />
+    } @else {
+      <div class="table-scroll">
+        <table mat-table [dataSource]="result.items">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>{{ 'managers.col.name' | transloco }}</th>
+            <td mat-cell *matCellDef="let m">
+              <div class="cell-main">{{ m.firstName }} {{ m.lastName }}</div>
+              <div class="cell-sub">{{ m.email }}</div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="business">
+            <th mat-header-cell *matHeaderCellDef>{{ 'managers.form.business' | transloco }}</th>
+            <td mat-cell *matCellDef="let m">
+              <a [routerLink]="['/admin/businesses', m.businessId]">{{ m.businessName }}</a>
+              @if (m.businessStatus === 'suspended') {
+                <mat-icon
+                  class="warn-icon"
+                  [matTooltip]="'managers.businessSuspended' | transloco"
+                  [attr.aria-label]="'managers.businessSuspended' | transloco"
+                >
+                  block
+                </mat-icon>
+              }
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="initials">
+            <th mat-header-cell *matHeaderCellDef>{{ 'common.initials' | transloco }}</th>
+            <td mat-cell *matCellDef="let m">{{ m.initials || ('common.none' | transloco) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="lastLogin">
+            <th mat-header-cell *matHeaderCellDef>{{ 'managers.col.lastLogin' | transloco }}</th>
+            <td mat-cell *matCellDef="let m">{{ (m.lastLoginAt | day) || ('common.none' | transloco) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>{{ 'common.status' | transloco }}</th>
+            <td mat-cell *matCellDef="let m">
+              <app-status-chip [tone]="m.status === 'active' ? 'success' : 'error'">
+                {{ 'accountStatus.' + m.status | transloco }}
+              </app-status-chip>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef><span class="cdk-visually-hidden">{{ 'common.actions' | transloco }}</span></th>
+            <td mat-cell *matCellDef="let m">
+              <button mat-icon-button [matMenuTriggerFor]="menu" [attr.aria-label]="'common.actions' | transloco">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="edit(m)">
+                  <mat-icon>edit</mat-icon>{{ 'common.edit' | transloco }}
+                </button>
+                <button mat-menu-item (click)="resetPassword(m)">
+                  <mat-icon>key</mat-icon>{{ 'managers.reset.action' | transloco }}
+                </button>
+                <button mat-menu-item (click)="toggleStatus(m)">
+                  <mat-icon>{{ m.status === 'active' ? 'block' : 'check_circle' }}</mat-icon>
+                  {{ (m.status === 'active' ? 'managers.suspend.action' : 'managers.reactivate.action') | transloco }}
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
+      <mat-paginator
+        [length]="result.total"
+        [pageIndex]="page()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPage($event)"
+      />
+    }
+  }
+</section>

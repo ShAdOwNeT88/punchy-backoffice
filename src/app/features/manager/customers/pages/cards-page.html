@@ -1,0 +1,66 @@
+<header class="page-header">
+  <div>
+    <h1>{{ 'customers.cardsTitle' | transloco }}</h1>
+    <p>{{ 'customers.cardsSubtitle' | transloco }}</p>
+  </div>
+  <div class="page-header__actions">
+    <a mat-flat-button routerLink="/manager/customers">
+      <mat-icon>add_card</mat-icon>{{ 'customers.issue.action' | transloco }}
+    </a>
+  </div>
+</header>
+
+<section class="panel panel--flush">
+  <div class="toolbar-row">
+    <mat-form-field class="grow">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-label>{{ 'customers.cardsSearch' | transloco }}</mat-label>
+      <input matInput [formControl]="search" type="search" />
+    </mat-form-field>
+    <mat-button-toggle-group
+      [value]="group()"
+      (change)="setGroup($event.value)"
+      hideSingleSelectionIndicator
+      [attr.aria-label]="'customers.group.label' | transloco"
+    >
+      <mat-button-toggle value="">{{ 'customers.group.all' | transloco }}</mat-button-toggle>
+      <mat-button-toggle value="membership">{{ 'customers.group.membership' | transloco }}</mat-button-toggle>
+      <mat-button-toggle value="loyalty">{{ 'customers.group.loyalty' | transloco }}</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-form-field>
+      <mat-label>{{ 'common.status' | transloco }}</mat-label>
+      <mat-select [value]="status() || 'all'" (valueChange)="setStatus($event === 'all' ? '' : $event)">
+        <mat-select-trigger>{{ (status() ? 'cardStatus.' + status() : 'common.all') | transloco }}</mat-select-trigger>
+        <mat-option value="all">{{ 'common.all' | transloco }}</mat-option>
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ 'cardStatus.' + s | transloco }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (cards.isLoading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (cards.error()) {
+    <app-empty-state icon="cloud_off" [title]="'common.loadError' | transloco">
+      <button mat-stroked-button (click)="cards.reload()">{{ 'common.retry' | transloco }}</button>
+    </app-empty-state>
+  } @else if (cards.value(); as result) {
+    @for (card of result.items; track card.id) {
+      <app-card-row [card]="card" />
+    } @empty {
+      <app-empty-state icon="style" [title]="'customers.noCardsFound' | transloco" />
+    }
+    @if (result.total > 0) {
+      <mat-paginator
+        [length]="result.total"
+        [pageIndex]="page()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPage($event)"
+      />
+    }
+  }
+</section>
