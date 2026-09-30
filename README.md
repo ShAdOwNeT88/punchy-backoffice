@@ -1,81 +1,81 @@
 # Punchy · Backoffice
 
-Il backoffice web di Punchy (l'app mobile è nel repository `tesserino`), le tessere cartacee da
-timbrare in digitale. Single page application Angular 22, pubblicabile come sito statico su
+The web back office of Punchy (the mobile app lives in the `tesserino` repository): paper punch
+cards, stamped digitally. An Angular 22 single page application, deployable as a static site on
 Cloudflare.
 
-- **Admin** — registra le attività e i loro gestori; può sospendere un'attività (e con lei tutti i
-  suoi gestori) o un singolo gestore; reimposta le password.
-- **Gestore** — cura i dati dell'attività e l'aspetto della tessera (logo, colori, stile), definisce i
-  tipi di tessera (ingressi, mensilità, fedeltà), gestisce l'anagrafica clienti, emette le tessere,
-  registra pagamenti e vidimazioni, consegna i premi.
+- **Admin** — registers businesses and their managers; can suspend a business (and all of its
+  managers with it) or a single manager; resets passwords.
+- **Manager** — maintains the business details and the card's look (logo, colours, style), defines
+  the card types (entries, monthly passes, loyalty), manages the customer registry, issues cards,
+  records payments and validations, hands out rewards.
 
-Requisiti: [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md) · Implementazione:
-[`docs/TECHNICAL.md`](docs/TECHNICAL.md) · Scelte: [`docs/DECISIONS.md`](docs/DECISIONS.md) ·
-Contratto API: [`openapi/punchy.yaml`](openapi/punchy.yaml).
+Requirements: [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md) · Implementation:
+[`docs/TECHNICAL.md`](docs/TECHNICAL.md) · Decisions: [`docs/DECISIONS.md`](docs/DECISIONS.md) ·
+API contract: [`openapi/punchy.yaml`](openapi/punchy.yaml).
 
-## Avvio
+## Getting started
 
-Serve Node ≥ 22.22.3 (o 24.15+).
+Requires Node ≥ 22.22.3 (or 24.15+).
 
 ```bash
 npm install
 npm start
 ```
 
-Apri <http://localhost:4200>. Il backend non esiste ancora: ogni chiamata API è servita da un
-**backend mock nel browser** (`src/mocks/`), con dati demo che restano nel `localStorage`. La pagina
-di login mostra due pulsanti per entrare come admin o come gestore e uno per ripristinare i dati
-demo. Le credenziali demo sono in [`src/mocks/seed.ts`](src/mocks/seed.ts).
+Open <http://localhost:4200>. The backend does not exist yet: every API call is served by an
+**in-browser mock backend** (`src/mocks/`), with demo data kept in `localStorage`. The login page
+shows two buttons to sign in as admin or as manager, and one to reset the demo data. The demo
+credentials are in [`src/mocks/seed.ts`](src/mocks/seed.ts).
 
-## Comandi
+## Commands
 
-| Comando | Cosa fa |
+| Command | What it does |
 |---|---|
-| `npm start` | Server di sviluppo |
-| `npm run build` | Build di produzione in `dist/punchy-backoffice/browser` |
-| `npm test` | Test (Vitest) in watch; `npm run test:coverage` per una sola esecuzione con coverage |
-| `npm run lint` | ESLint, comprese le regole sui confini tra feature |
-| `npm run api:generate` | Rigenera i client HTTP da `openapi/punchy.yaml` (orval) |
-| `npm run deploy` | Build e pubblicazione su Cloudflare (`wrangler deploy`) |
+| `npm start` | Development server |
+| `npm run build` | Production build into `dist/punchy-backoffice/browser` |
+| `npm test` | Tests (Vitest) in watch mode; `npm run test:coverage` for a single run with coverage |
+| `npm run lint` | ESLint, including the feature boundary rules |
+| `npm run api:generate` | Regenerates the HTTP clients from `openapi/punchy.yaml` (orval) |
+| `npm run deploy` | Builds and publishes to Cloudflare (`wrangler deploy`) |
 
-## Deploy su Cloudflare
+## Deploying to Cloudflare
 
-`wrangler.jsonc` pubblica la build come Worker con soli asset statici e
-`not_found_handling: "single-page-application"`: ogni URL sconosciuto restituisce `index.html` e il
-router di Angular fa il resto. `public/_headers` imposta cache e intestazioni di sicurezza.
+`wrangler.jsonc` publishes the build as a static-assets-only Worker with
+`not_found_handling: "single-page-application"`: every unknown URL returns `index.html` and the
+Angular router does the rest. `public/_headers` sets caching and security headers.
 
 ```bash
 npx wrangler login
 npm run deploy
 ```
 
-In alternativa, con Cloudflare Pages: build command `npm run build`, output directory
+Alternatively, with Cloudflare Pages: build command `npm run build`, output directory
 `dist/punchy-backoffice/browser`.
 
-## Collegare il backend vero
+## Connecting the real backend
 
-1. Il backend implementa [`openapi/punchy.yaml`](openapi/punchy.yaml).
-2. In `src/environments/environment.ts` (produzione) e `environment.development.ts` imposta
-   `apiBaseUrl` e `useMockApi: false`.
-3. Se il contratto cambia: aggiorna `openapi/punchy.yaml`, poi `npm run api:generate`.
+1. The backend implements [`openapi/punchy.yaml`](openapi/punchy.yaml).
+2. In `src/environments/environment.ts` (production) and `environment.development.ts`, set
+   `apiBaseUrl` and `useMockApi: false`.
+3. If the contract changes: update `openapi/punchy.yaml`, then run `npm run api:generate`.
 
-## Struttura
+## Structure
 
 ```
 src/
 ├── app/
-│   ├── core/                  sessione, guard, interceptor, i18n, notifiche, layout
+│   ├── core/                  session, guards, interceptors, i18n, notifications, layout
 │   ├── features/
 │   │   ├── login/  account/
-│   │   ├── admin/             overview · businesses · managers · data-access (client admin)
+│   │   ├── admin/             overview · businesses · managers · data-access (admin client)
 │   │   └── manager/           dashboard · business-profile · templates · customers
-│   │                          · data-access (client business, store, regole di lettura)
-│   └── shared/                ui (anteprima tessera, chip, tile…) · util (formati, errori)
-├── mocks/                     backend mock: seed, regole, handler per risorsa
-├── testing/                   helper dei test
+│   │                          · data-access (business client, store, read rules)
+│   └── shared/                ui (card preview, chips, tiles…) · util (formatting, errors)
+├── mocks/                     mock backend: seed, rules, per-resource handlers
+├── testing/                   test helpers
 ├── environments/
-└── styles/                    token di colore e dimensione, palette Material
-public/i18n/                   traduzioni it/en, un file per feature
-openapi/punchy.yaml            contratto con il backend (anche per l'app mobile)
+└── styles/                    colour and size tokens, Material palette
+public/i18n/                   it/en translations, one file per feature
+openapi/punchy.yaml            backend contract (also used by the mobile app)
 ```
